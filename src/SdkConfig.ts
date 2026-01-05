@@ -25,7 +25,7 @@ import { DeepReadonly, Defaultize } from "./@types/common";
 
 // see element-web config.md for docs, or the IConfigOptions interface for dev docs
 export const DEFAULTS: DeepReadonly<IConfigOptions> = {
-    brand: "SchildiChat",
+    brand: "DGEChat",
     help_url: "https://element.io/help",
     help_encryption_url: "https://element.io/help#encryption",
     integrations_ui_url: "https://scalar.vector.im/",
@@ -58,8 +58,8 @@ export const DEFAULTS: DeepReadonly<IConfigOptions> = {
 
     feedback: {
         existing_issues_url:
-            "https://github.com/SchildiChat/schildichat-desktop/issues?q=is%3Aopen+is%3Aissue+sort%3Areactions-%2B1-desc",
-        new_issue_url: "https://github.com/SchildiChat/schildichat-desktop/issues/new/choose",
+            "https://github.com/DGEChat/dgechat-desktop/issues?q=is%3Aopen+is%3Aissue+sort%3Areactions-%2B1-desc",
+        new_issue_url: "https://github.com/DGEChat/dgechat-desktop/issues/new/choose",
     },
 };
 

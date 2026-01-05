@@ -534,7 +534,7 @@ export function bodyToHtml(content: IContent, highlights: Optional<string[]>, op
             const isPlainText = phtml.body.innerHTML === phtml.body.textContent;
             isHtmlMessage = !isPlainText;
 
-            let safeBodyNeedsSerialisation = false; // SchildiChat feature to download appropriate thumbnail for emojis: delaying serialisation is needed so emoji attributes can still be altered midway through this function
+            let safeBodyNeedsSerialisation = false; // DGEChat feature to download appropriate thumbnail for emojis: delaying serialisation is needed so emoji attributes can still be altered midway through this function
             if (isHtmlMessage && SettingsStore.getValue("feature_latex_maths")) {
                 [...phtml.querySelectorAll<HTMLElement>("div, span[data-mx-maths]")].forEach((e) => {
                     e.outerHTML = katex.renderToString(decode(e.getAttribute("data-mx-maths")), {
@@ -581,7 +581,7 @@ export function bodyToHtml(content: IContent, highlights: Optional<string[]>, op
                 });
             }
             if (safeBodyNeedsSerialisation) {
-                // SchildiChat: all done editing emojis, can finally serialise the body
+                // DGEChat: all done editing emojis, can finally serialise the body
                 safeBody = phtml.body.innerHTML;
             }
             if (bodyHasEmoji) {

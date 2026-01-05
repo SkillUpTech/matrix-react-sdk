@@ -1,10 +1,10 @@
-# Warning: This information is only partially applicable to SchildiChat, look here instead: https://github.com/SchildiChat/schildichat-desktop
+# Warning: This information is only partially applicable to DGEChat, look here instead: https://github.com/DGEChat/dgechat-desktop
 
-<pre><code><a href="https://github.com/SchildiChat/schildichat-desktop">schildichat-desktop</a> (recommended starting point to build SchildiChat for Web <b>and</b> Desktop)
-|-- <a href="https://github.com/SchildiChat/element-desktop">element-desktop</a> (electron wrapper)
-|-- <a href="https://github.com/SchildiChat/element-web">element-web</a> ("skin" for matrix-react-sdk)
+<pre><code><a href="https://github.com/DGEChat/dgechat-desktop">dgechat-desktop</a> (recommended starting point to build DGEChat for Web <b>and</b> Desktop)
+|-- <a href="https://github.com/DGEChat/element-desktop">element-desktop</a> (electron wrapper)
+|-- <a href="https://github.com/DGEChat/element-web">element-web</a> ("skin" for matrix-react-sdk)
 |-- <b>matrix-react-sdk</b> <i>&lt;-- this repo</i> (most of the development happens here)
-`-- <a href="https://github.com/SchildiChat/matrix-js-sdk">matrix-js-sdk</a> (Matrix client js sdk)
+`-- <a href="https://github.com/DGEChat/matrix-js-sdk">matrix-js-sdk</a> (Matrix client js sdk)
 </code></pre>
 
 # matrix-react-sdk

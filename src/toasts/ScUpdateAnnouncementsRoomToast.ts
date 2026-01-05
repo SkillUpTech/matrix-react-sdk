@@ -57,7 +57,7 @@ export const showToast = (): void => {
                     description: _t(
                         "Do you want to join a room notifying you about new releases? " +
                             "This is especially useful if your platform doesn't support " +
-                            "automatic updates for SchildiChat (e.g. Windows and macOS).",
+                            "automatic updates for DGEChat (e.g. Windows and macOS).",
                     ),
                     acceptLabel: _t("Show preview"),
                     onAccept,

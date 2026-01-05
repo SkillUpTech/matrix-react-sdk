@@ -239,7 +239,7 @@ export default class BugReportDialog extends React.Component<IProps, IState> {
                                     a: (sub) => (
                                         <a
                                             target="_blank"
-                                            href="https://github.com/SchildiChat/schildichat-desktop/issues/new/choose"
+                                            href="https://github.com/DGEChat/dgechat-desktop/issues/new/choose"
                                         >
                                             {sub}
                                         </a>

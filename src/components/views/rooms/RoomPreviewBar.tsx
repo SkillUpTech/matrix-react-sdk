@@ -570,7 +570,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                         {
                             issueLink: (label) => (
                                 <a
-                                    href="https://github.com/SchildiChat/schildichat-desktop/issues/new/choose"
+                                    href="https://github.com/DGEChat/dgechat-desktop/issues/new/choose"
                                     target="_blank"
                                     rel="noreferrer noopener"
                                 >
