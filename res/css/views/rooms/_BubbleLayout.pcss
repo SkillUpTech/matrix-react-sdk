@@ -1,0 +1,975 @@
+/*
+Copyright 2015, 2016 OpenMarket Ltd
+Copyright 2020 The Matrix.org Foundation C.I.C.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+$left-gutter: 54px;
+
+.sc_BubbleLayout {
+    /* ---- Overrides ---- */
+
+    .mx_RoomView_MessageList {
+        padding-bottom: 8px;
+        padding-right: 10px;
+    }
+
+    .mx_RoomTile {
+        .mx_RoomTile_titleContainer {
+            .mx_RoomTile_title,
+            .mx_RoomTile_subtitle {
+                margin: 2px 2px;
+            }
+        }
+    }
+
+    li > .mx_DateSeparator {
+        margin: 7px 0px 1px 0px;
+    }
+
+    .mx_LinkPreviewWidget {
+        margin-bottom: 0px;
+    }
+
+    .mx_LinkPreviewGroup > .mx_AccessibleButton {
+        margin-top: 8px;
+        margin-bottom: -$font-18px; /* make timestamp fit on the same line */
+    }
+
+    .mx_EventTile {
+        /* no reserved space for read receipts required. */
+        padding-top: 6px;
+        position: relative;
+        font-size: $font-15px;
+
+        &.mx_EventTile_info {
+            padding-top: 0px;
+
+            .mx_EventTile_avatar {
+                left: $left-gutter;
+            }
+        }
+
+        > .mx_DisambiguatedProfile {
+            line-height: $font-17px;
+            padding-left: $left-gutter;
+            max-width: unset !important;
+        }
+
+        > .mx_EventTile_line {
+            padding-left: $left-gutter !important;
+            border-left: none !important;
+            background: transparent !important;
+            margin-right: unset;
+        }
+
+        > .mx_EventTile_avatar {
+            position: absolute;
+
+            .mx_BaseAvatar_image,
+            .mx_BaseAvatar_initial {
+                width: 30px !important;
+                height: 30px !important;
+            }
+        }
+
+        .mx_EventTile_line,
+        .mx_EventTile_reply {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: $left-gutter;
+            line-height: $font-22px;
+            min-height: $font-22px;
+        }
+
+        &.mx_EventTile_highlight,
+        &.mx_EventTile_highlight .markdown-body {
+            color: unset;
+        }
+    }
+
+    .mx_GenericEventListSummary {
+        .mx_MatrixChat_useCompactLayout & {
+            .mx_TextualEvent.mx_GenericEventListSummary_summary {
+                font-size: $font-14px;
+            }
+        }
+    
+        /* Make all state events one order smaller than the other events */
+        .mx_EventTile {
+            font-size: $font-14px;
+        }
+    }
+
+    .mx_TextualEvent.mx_GenericEventListSummary_summary {
+        font-size: $font-14px;
+        display: inline-flex;
+    }
+
+    .mx_EventTile_continuation {
+        padding-top: 0 !important;
+    }
+
+    .mx_EventTile_line,
+    .mx_EventTile_reply {
+        padding-left: $left-gutter;
+    }
+
+    .mx_GenericEventListSummary,
+    .mx_EventTile_tileError {
+        /* For toggle */
+        position: relative;
+
+        /* Consistence with other bubbles */
+        .mx_EventTile {
+            padding-top: 0;
+        }
+        .sc_EventTile_bubbleLine_info {
+            margin-top: 6px;
+        }
+
+        .mx_EventTile_line {
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+
+        .sc_EventTile_bubbleArea_info {
+            /* For toggle */
+            max-width: 720px;
+        }
+    }
+
+    .mx_GenericEventListSummary_toggle {
+        /* ToDo: Find better way to not crash bubble on small width screens */
+        float: unset;
+        position: absolute;
+        right: 10px;
+        margin-right: 0;
+        z-index: 1;
+    }
+
+    .mx_EventTile_info .mx_EventTile_line {
+        padding-left: calc($left-gutter + 18px) !important;
+        max-width: max-content;
+
+        .mx_MessageActionBar {
+            top: -21px; /* counteract padding: 24-3 */
+        }
+    }
+
+    .mx_EventTile_tileError {
+        .sc_EventTile_bubbleLine_info {
+            max-width: unset;
+        }
+
+        .sc_EventTile_bubble_info > * {
+            display: block;
+        }
+
+        .mx_AccessibleButton {
+            position: relative; /* Make the source button clickable */
+            display: block;
+        }
+    }
+
+    .mx_DisambiguatedProfile {
+        text-align: left;
+        font-size: $font-15px;
+    }
+
+    .mx_EventTile_selected > div > a > .mx_MessageTimestamp {
+        left: 0px;
+        width: 46px;
+    }
+
+    .mx_EventTile_msgOption {
+        float: unset;
+        text-align: unset;
+        position: unset;
+
+        margin-left: 4px;
+        margin-right: unset;
+
+        /* Hack to stop the height of this pushing the messages apart.
+           Replaces margin-top: -6px. This interacts better with a read
+           marker being in between. Content overflows. */
+        /* SC: Reserve our space */
+        height: 24px;
+        margin-top: 1px;
+        margin-bottom: 1px;
+
+        /* stop read avatars overflowing */
+        width: 100%;
+
+        &.sc_readReceipts_empty {
+            height: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    .mx_EventTile_bubbleContainer .mx_EventTile_msgOption {
+        grid-column: unset; /* show read avatars like always */
+    }
+
+    .mx_ReadReceiptGroup {
+        position: unset !important;
+
+        .mx_ReadReceiptGroup_button {
+            flex-direction: row-reverse;
+        }
+
+        .mx_ReadReceiptGroup_remainder {
+            margin-left: 2px;
+        }
+    }
+
+    .mx_EventTile_content {
+        /* Handled by bubble */
+        margin-right: unset;
+
+        .markdown-body {
+            p,
+            ul,
+            ol,
+            dl,
+            blockquote,
+            pre,
+            table {
+                margin-bottom: 8px;
+            }
+
+            blockquote > :last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        &.mx_ViewSourceEvent {
+            &.mx_ViewSourceEvent_expanded {
+                text-align: start;
+            }
+        }
+    }
+
+    /* No unnecessary horizontal scrolling of code blocks */
+    .markdown-body {
+        pre {
+            padding-left: 1.5em;
+
+            .mx_EventTile_lineNumbers {
+                margin-left: -2em;
+            }
+        }
+    }
+
+    /* Explicit relationships so that it doesn't apply to nested EventTile components (e.g in Replies) */
+    .mx_EventTile:hover.mx_EventTile_verified .mx_EventTile_line > a > .mx_MessageTimestamp,
+    .mx_EventTile:hover.mx_EventTile_unverified .mx_EventTile_line > a > .mx_MessageTimestamp,
+    .mx_EventTile:hover.mx_EventTile_unknown .mx_EventTile_line > a > .mx_MessageTimestamp {
+        left: 5px;
+    }
+
+    .mx_EventTile_isEditing {
+        background-color: transparent;
+    }
+
+    .mx_EditMessageComposer {
+        margin: 0;
+        padding: 0;
+
+        .mx_EditMessageComposer_buttons {
+            position: unset;
+            margin: 0;
+            margin-left: auto;
+            padding: 0;
+            padding-top: 10px;
+            max-width: 100%;
+            background: transparent;
+            flex-wrap: wrap;
+
+            .mx_AccessibleButton {
+                padding: 5px 0;
+                width: 11em;
+                max-width: 100%;
+            }
+        }
+    }
+
+    .mx_BasicMessageComposer {
+        max-width: 100%;
+    }
+
+    /* blockquote.mx_ReplyChain { */
+    /*     margin-bottom: 10px; */
+    /* } */
+
+    .mx_ReplyChain,
+    .mx_ReplyPreview {
+        /* padding-top: 2px; */
+
+        .mx_EventTile_avatar {
+            top: 4px !important;
+        }
+
+        .mx_MessageTimestamp {
+            top: 4px !important;
+        }
+
+        .mx_MImageBody_thumbnail_container {
+            border: 1px solid $event-timestamp-color !important;
+            border-radius: $border-radius-8px;
+            overflow: hidden;
+        }
+    }
+
+    .mx_MNoticeBody {
+        opacity: unset;
+    }
+
+    .mx_MessageActionBar {
+        left: unset;
+        right: 0px;
+        top: -36px;
+    }
+
+    .sc_LinkedTimestamp {
+        /* Get rid of underline with custom themes */
+        text-decoration: none;
+    }
+
+    .mx_MessageTimestamp {
+        position: absolute;
+        width: 46px; /* 8 + 30 (avatar) + 8 */
+    }
+
+    .mx_ReactionsRow {
+        display: flex;
+        justify-content: left;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        margin-top: 4px;
+        margin-bottom: 0;
+
+        .mx_ReactionsRow_addReactionButton {
+            margin-left: unset;
+
+            &::before {
+                left: 0;
+            }
+        }
+    }
+
+    a.mx_Pill {
+        max-width: 100%;
+    }
+
+    .sc_EventTile_bubble_sticker {
+        .sc_MImageBody_container {
+            position: relative;
+            display: flex;
+        }
+
+        .mx_MImageBody {
+            margin-right: 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: $border-radius-8px;
+            display: inline-flex;
+            box-sizing: border-box;
+            border: 1px solid $message-bubble-background;
+
+            .mx_MFileBody_download {
+                display: none;
+            }
+
+            .sc_PlaceholderTimestamp {
+                display: none;
+            }
+
+            .mx_MessageTimestamp {
+                visibility: visible !important;
+                text-align: center;
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                left: unset;
+                right: 0;
+                top: unset;
+                bottom: 0;
+                border-top-left-radius: $border-radius-8px;
+                font-size: 12px;
+                padding: 6px 9px;
+                width: unset;
+                line-height: 1;
+            }
+        }
+
+        .mx_MImageBody_thumbnail {
+            border-radius: unset;
+        }
+
+        &.sc_EventTile_bubble_self {
+            .mx_MImageBody {
+                border-color: $message-bubble-background-self;
+            }
+        }
+    }
+
+    .mx_MStickerBody_wrapper {
+        padding: 0;
+    }
+
+    .sc_EventTile_bubble {
+        .sc_MImageBody_container {
+            .mx_MImageBody_thumbnail_container {
+                display: block;
+                margin: -4px -7px 0 -7px;
+            }
+
+            &:not(:first-child) {
+                .mx_MImageBody_thumbnail_container {
+                    margin-top: unset;
+                }
+            }
+        }
+    }
+
+    span.mx_MVideoBody {
+        display: block;
+        margin: -4px -7px 0 -7px;
+
+        &:not(:first-child) {
+            margin-top: unset;
+        }
+
+        video.mx_MVideoBody {
+            display: block;
+            max-width: 100%;
+        }
+
+        .mx_MFileBody {
+            display: flex;
+            position: relative;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mx_MFileBody_download {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .mx_MPollBody {
+        .mx_MessageTimestamp {
+            margin-inline-start: 10px;
+        }
+    }
+
+    .mx_cryptoEvent .mx_cryptoEvent_buttons {
+        margin-left: 8px;
+    }
+
+    /* ---- Bubble specific ---- */
+
+    .mx_EventTile > .sc_EventTile_bubbleLine_info {
+        padding-left: 0 !important;
+    }
+
+    .mx_EventTile .sc_EventTile_bubbleLine_info {
+        line-height: unset;
+    }
+
+    .mx_GenericEventListSummary .sc_EventTile_bubbleLine_info {
+        /* ToDo: Find better way to not crash bubble with toggle on small width screens */
+        /* padding-left: 110px; */
+        padding-left: 0;
+        margin-right: 0;
+    }
+
+    .sc_EventTile_bubbleContainer {
+        > .mx_EventTile_avatar {
+            top: 9px;
+            left: 8px;
+        }
+    }
+
+    .mx_EventTile_e2eIcon {
+        position: absolute;
+        bottom: 4px;
+    }
+
+    /* .sc_EventTile_bubbleLine { */
+    /*     .mx_EventTile_e2eIcon { */
+    /*         left: 16px; */
+
+    /*         .sc_EventTile_bubbleTailLeftContainer & { */
+    /*             top: 35px; */
+    /*         } */
+    /*     } */
+    /* } */
+
+    .sc_EventTile_bubbleArea {
+        /* No full width for both-side bubbles only */
+        width: 84%;
+        max-width: 880px;
+        padding: 0px;
+        margin-bottom: 0;
+    }
+
+    .sc_EventTile_bubbleArea_left {
+        margin-left: 0px;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .sc_EventTile_bubble {
+        background-color: $message-bubble-background;
+        padding: 7px 10px;
+        border-radius: $border-radius-8px;
+        /* margin: 10px auto; */
+        max-width: max-content;
+        /* Min width: respect/"hide" bubble tail */
+        min-width: 20px;
+        position: relative;
+        /* box-sizing: content-box; */
+        /* display: flex; */
+        /* flex-wrap: wrap; */
+
+        /* Don't inherit bubbleArea alignment */
+        text-align: start;
+
+        /* ToDo: make the tail some sort of absolutely positioned rotated cutout */
+        &.sc_EventTile_bubble_tail::before {
+            content: "";
+            border: 16px solid transparent;
+            border-top-color: $message-bubble-background;
+            border-bottom: 0;
+            position: absolute;
+            top: 0;
+            z-index: -1; /* bring the tail behind the bubble */
+        }
+
+        > .mx_DisambiguatedProfile {
+            /* Sender-profile within bubble */
+            max-width: 100%;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .mx_ReplyChain_wrapper {
+            margin-top: 3px;
+        }
+
+        > *:not(.mx_ReplyChain_wrapper) {
+            .markdown-body > blockquote {
+                margin-top: 3px !important;
+            }
+
+            .markdown-body > .mx_EventTile_pre_container:last-child {
+                pre {
+                    margin-bottom: 0;
+                }
+            }
+
+            .markdown-body > p:last-child {
+                display: inline;
+            }
+
+            /* ToDo: Find a way to have this not break if plain text follows after */
+            /* .markdown-body > blockquote:last-child { */
+            /*     display: inline-block; */
+            /*     max-width: 100%; */
+            /* } */
+
+            .sc_PlaceholderTimestamp {
+                display: inline-flex;
+                margin-inline-start: 0.7em;
+
+                /* don't add additional height */
+                height: 0;
+                overflow-y: hidden;
+
+                .mx_MessageTimestamp {
+                    visibility: visible !important;
+                    position: unset;
+                    width: unset;
+                    text-align: unset;
+                    display: inline;
+                    font-size: 12px;
+                }
+
+                &:dir(rtl) {
+                    display: block;
+                    margin-inline-start: unset;
+                    height: unset;
+                    opacity: 0;
+                }
+            }
+
+            .sc_LinkedTimestamp {
+                position: absolute;
+                inset-block-end: 4px;
+                inset-inline-end: 10px;
+
+                .mx_MessageTimestamp {
+                    visibility: visible !important;
+                    position: unset;
+                    text-align: unset;
+                    display: inline;
+                    font-size: 12px;
+                }
+
+                &:dir(rtl) {
+                    position: absolute;
+                    display: block;
+                    inset-inline-end: unset;
+                    right: 10px;
+                }
+            }
+
+            /* ToDo: These break on small width */
+            .mx_MFileBody_info,
+            .mx_MediaBody.mx_AudioPlayer_container {
+                display: inline-block;
+                padding: 0;
+                padding-top: 6px;
+                background: transparent;
+                max-width: 100%;
+            }
+            .mx_MFileBody_info {
+                padding-bottom: 6px;
+                color: $primary-content;
+            }
+            .mx_MediaBody.mx_VoiceMessagePrimaryContainer {
+                display: inline-flex;
+                contain: paint;
+                padding-left: 0;
+                padding-right: 0;
+                background: transparent;
+                max-width: 100%;
+            }
+        }
+    }
+
+    .sc_EventTile_bubble_left {
+        margin-left: 0px;
+        margin-right: auto;
+
+        &.sc_EventTile_bubble_tail::before {
+            left: -8px;
+        }
+
+        .mx_EventTile_e2eIcon {
+            right: -18px;
+        }
+    }
+
+    .sc_EventTile_bubbleArea_right {
+        margin-right: 16px;
+        margin-left: auto;
+        text-align: right;
+
+        .mx_ReactionsRow {
+            justify-content: right;
+            flex-direction: row-reverse;
+
+            .mx_ReactionsRow_addReactionButton {
+                margin-left: unset;
+                margin-right: 6px;
+            }
+
+            .mx_ReactionsRow_showAll {
+                margin-left: -4px;
+                margin-right: 10px;
+            }
+        }
+
+        .mx_ThreadSummary {
+            margin-left: auto;
+        }
+    }
+
+    .sc_EventTile_bubble_right {
+        margin-right: 0px;
+        margin-left: auto;
+
+        &.sc_EventTile_bubble_tail::before {
+            right: -8px;
+        }
+
+        .mx_EventTile_e2eIcon {
+            left: -18px;
+        }
+    }
+
+    .sc_EventTile_bubble_self {
+        &:not(.sc_EventTile_bubble_sticker) {
+            background-color: $message-bubble-background-self;
+
+            &.sc_EventTile_bubble_tail::before {
+                border-top-color: $message-bubble-background-self;
+            }
+        }
+    }
+
+    .sc_EventTile_bubbleArea_center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .sc_EventTile_bubble_center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .sc_EventTile_bubbleArea_info {
+        width: 76%;
+    }
+
+    .sc_EventTile_bubble_info {
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            box-shadow: inset 0px 0px 0px 1px $roomtopic-color;
+            opacity: 0.15;
+            border-radius: $border-radius-8px;
+        }
+
+        text-align: center;
+        background: transparent;
+
+        .mx_EventTileBubble {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            max-width: unset;
+            text-align: start;
+
+            &::before,
+            &::after {
+                margin-top: 1px;
+            }
+
+            .mx_EventTileBubble_title {
+                opacity: 0.8;
+            }
+
+            .mx_EventTileBubble_subtitle {
+                position: relative; /* Make the link to the old room clickable */
+            }
+        }
+
+        .mx_EventTile_avatar {
+            display: inline;
+            position: unset;
+
+            &::after {
+                content: "\00a0";
+            }
+        }
+
+        .mx_BaseAvatar {
+            display: inline-flex;
+            vertical-align: middle;
+            margin-top: -2px;
+        }
+
+        .mx_GenericEventListSummary_avatars {
+            padding-top: unset;
+        }
+
+        .mx_TextualEvent,
+        .mx_RoomAvatarEvent {
+            display: inline;
+            opacity: 0.8;
+        }
+
+        .mx_RoomAvatarEvent_avatar {
+            top: unset;
+        }
+
+        .mx_EventTile_e2eIcon {
+            right: -18px;
+        }
+    }
+
+    .mx_LegacyCallEvent_wrapper {
+        padding: 2px 0;
+
+        .mx_LegacyCallEvent {
+            &.mx_LegacyCallEvent_narrow {
+                width: 100%;
+
+                .mx_LegacyCallEvent_info {
+                    margin-top: 8px;
+                }
+
+                .mx_LegacyCallEvent_content {
+                    margin-bottom: 6px;
+                }
+            }
+        }
+    }
+
+    .mx_LegacyCallEvent {
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+        border-radius: unset;
+        width: 100%;
+        max-width: unset;
+        height: unset;
+
+        .mx_LegacyCallEvent_info {
+            margin-left: unset;
+
+            .mx_BaseAvatar {
+                margin-top: unset;
+            }
+
+            .mx_LegacyCallEvent_info_basic {
+                text-align: left;
+
+                .mx_LegacyCallEvent_sender {
+                    opacity: 0.8;
+                }
+            }
+        }
+
+        .mx_LegacyCallEvent_content {
+            margin-right: unset;
+            margin-left: 16px;
+        }
+    }
+
+    .sc_EventTile_bubble_notice {
+        opacity: 0.6;
+    }
+
+    .sc_EventTile_bubble_sticker {
+        max-width: max-content;
+        position: relative;
+
+        &.sc_EventTile_bubble_right {
+            margin-left: auto;
+
+            > * {
+                margin-left: auto;
+            }
+
+            .mx_MImageBody_thumbnail {
+                left: unset;
+                right: 0;
+            }
+        }
+
+        /* maybe: */
+        /* & + .mx_ReactionsRow { */
+        /*     margin-top: 0; */
+        /*     margin-bottom: 0; */
+        /* } */
+
+        .mx_MImageBody {
+            border: none;
+
+            .mx_MessageTimestamp {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+    }
+
+    .mx_EventTile_selected {
+        .sc_EventTile_bubble {
+            background: $message-bubble-background-selected;
+
+            &.sc_EventTile_bubble_tail::before {
+                border-top-color: $message-bubble-background-selected;
+            }
+        }
+
+        .sc_EventTile_bubble_sticker {
+            > .sc_MImageBody_container .mx_MImageBody {
+                background: $accent;
+
+                .mx_MImageBody_thumbnail {
+                    opacity: 0.7;
+                }
+            }
+        }
+    }
+
+    .mx_NewRoomIntro {
+        margin-left: $left-gutter;
+        margin-right: $left-gutter;
+        text-align: center;
+
+        .mx_MiniAvatarUploader {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ToDo: Wrap this somehow into the real bubble layout */
+        .mx_EventTileBubble {
+            text-align: start;
+            background-color: transparent;
+            box-shadow: inset 0px 0px 0px 1px rgba($roomtopic-color, 0.15);
+            margin-bottom: 30px;
+
+            &::before,
+            &::after {
+                margin-top: 1px;
+            }
+
+            .mx_EventTileBubble_title {
+                opacity: 0.8;
+            }
+        }
+
+        .mx_NewRoomIntro_buttons {
+            justify-content: center;
+        }
+    }
+
+    /* single side bubbles overrides */
+    &.sc_BubbleLayout_singleSide {
+        .sc_EventTile_bubbleArea {
+            width: calc(100% - 16px);
+            max-width: unset;
+        }
+
+        .sc_EventTile_bubbleArea_info {
+            width: 80%;
+            max-width: 720px;
+        }
+
+        .sc_EventTile_bubbleLine {
+            max-width: 1040px;
+        }
+
+        .mx_NewRoomIntro {
+            max-width: calc(1040px - $left-gutter);
+        }
+
+        .sc_EventTile_bubbleLine_info,
+        .mx_DateSeparator,
+        .mx_GenericEventListSummary,
+        .mx_RoomView_MessageList > li > .mx_Spinner {
+            max-width: calc($left-gutter + 1040px);
+        }
+    }
+}
