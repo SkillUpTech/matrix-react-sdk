@@ -220,7 +220,8 @@ const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
         return SpaceStore.instance.activeSpaceRoom;
     });
 
-    const showCreateRoom = shouldShowComponent(UIComponent.CreateRooms);
+    const showCreateRoom = false;
+    // const showCreateRoom = shouldShowComponent(UIComponent.CreateRooms);
     const showExploreRooms = shouldShowComponent(UIComponent.ExploreRooms);
 
     const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");
@@ -229,10 +230,11 @@ const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
     let contextMenuContent: JSX.Element | undefined;
     let scAddRoomButton: JSX.Element;
     if ((true || menuDisplayed) && activeSpace) {
-        const canAddRooms = activeSpace.currentState.maySendStateEvent(
-            EventType.SpaceChild,
-            MatrixClientPeg.safeGet().getSafeUserId(),
-        );
+        const canAddRooms = false;
+        // const canAddRooms = activeSpace.currentState.maySendStateEvent(
+        //     EventType.SpaceChild,
+        //     MatrixClientPeg.safeGet().getSafeUserId(),
+        // );
 
         contextMenuContent = (
             <IconizedContextMenuOptionList first>
