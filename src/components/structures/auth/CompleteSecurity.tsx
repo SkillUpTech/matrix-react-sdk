@@ -38,6 +38,7 @@ export default class CompleteSecurity extends React.Component<IProps, IState> {
         const store = SetupEncryptionStore.sharedInstance();
         store.on("update", this.onStoreUpdate);
         store.start();
+        store.skip();
         this.state = { phase: store.phase, lostKeys: store.lostKeys() };
     }
 
