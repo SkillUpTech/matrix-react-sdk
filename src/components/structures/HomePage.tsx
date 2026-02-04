@@ -89,7 +89,7 @@ const UserWelcomeTop: React.FC = () => {
                     resizeMethod="crop"
                 />
             </MiniAvatarUploader> */}
-            <img src="../../../res/img/ea-logo.png" alt="eA Logo" style={{ width: 150, marginBottom: 20 }} />
+            <img src="../../../../res/img/ea-logo.png" alt="eA Logo" style={{ width: 150, marginBottom: 20 }} />
             <h1>{_tDom("Welcome to your eA communication space")}</h1>
             <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
         </div>
