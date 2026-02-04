@@ -32,7 +32,6 @@ import MatrixClientContext, { useMatrixClientContext } from "../../contexts/Matr
 import MiniAvatarUploader, { AVATAR_SIZE } from "../views/elements/MiniAvatarUploader";
 import PosthogTrackers from "../../PosthogTrackers";
 import EmbeddedPage from "./EmbeddedPage";
-import eaLogo from "../../../../res/img/ea-logo.png";
 
 const onClickSendDm = (ev: ButtonEvent): void => {
     PosthogTrackers.trackInteraction("WebHomeCreateChatButton", ev);
@@ -90,7 +89,7 @@ const UserWelcomeTop: React.FC = () => {
                     resizeMethod="crop"
                 />
             </MiniAvatarUploader> */}
-            <img src={eaLogo} alt="eA Logo" style={{ width: 150, marginBottom: 20 }} />
+            <img src={require("../../../res/img/ea-logo.png").default} alt="eA Logo" style={{ width: 150, marginBottom: 20 }} />
             <h1>{_tDom("Welcome to your eA communication space")}</h1>
             <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
         </div>
