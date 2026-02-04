@@ -33,7 +33,11 @@ import { UIComponent } from "../settings/UIFeature";
  * otherwise.
  */
 function shouldShowComponent(component: UIComponent): boolean {
-    return true; // default to visible
+    const hiddenComponents: UIComponent[] = [
+        UIComponent.CreateSpaces,
+        UIComponent.CreateRooms,
+    ];
+    return !hiddenComponents.includes(component);
 }
 
 // This interface summarises all available customisation points and also marks
