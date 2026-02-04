@@ -72,7 +72,7 @@ const UserWelcomeTop: React.FC = () => {
 
     return (
         <div>
-            <MiniAvatarUploader
+            {/* <MiniAvatarUploader
                 hasAvatar={!!ownProfile.avatarUrl}
                 hasAvatarLabel={_tDom("Great, that'll help people know it's you")}
                 noAvatarLabel={_tDom("Add a photo so people know it's you.")}
@@ -88,10 +88,10 @@ const UserWelcomeTop: React.FC = () => {
                     height={AVATAR_SIZE}
                     resizeMethod="crop"
                 />
-            </MiniAvatarUploader>
-
-            <h1>{_tDom("Welcome %(name)s", { name: ownProfile.displayName })}</h1>
-            <h2>{_tDom("Now, let's help you get started")}</h2>
+            </MiniAvatarUploader> */}
+            <img src="../../../res/img/ea-logo.png" alt="eA Logo" style={{ width: 150, marginBottom: 20 }} />
+            <h1>{_tDom("Welcome to your eA communication space")}</h1>
+            <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
         </div>
     );
 };
@@ -115,8 +115,8 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         introSection = (
             <React.Fragment>
                 <img src={logoUrl} alt={config.brand} />
-                <h1>{_tDom("Welcome to %(appName)s", { appName: config.brand })}</h1>
-                <h2>{_tDom("Own your conversations.")}</h2>
+                <h1>{_tDom("Welcome to your eA communication space")}</h1>
+                <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
             </React.Fragment>
         );
     }
@@ -126,15 +126,15 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
             <div className="mx_HomePage_default_wrapper">
                 {introSection}
                 <div className="mx_HomePage_default_buttons">
-                    <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
-                        {_tDom("Send a Direct Message")}
+                    {/* <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
+                        {_tDom("Send a Driect Message")}
                     </AccessibleButton>
                     <AccessibleButton onClick={onClickExplore} className="mx_HomePage_button_explore">
                         {_tDom("Explore Public Rooms")}
                     </AccessibleButton>
                     <AccessibleButton onClick={onClickNewRoom} className="mx_HomePage_button_createGroup">
                         {_tDom("Create a Group Chat")}
-                    </AccessibleButton>
+                    </AccessibleButton> */}
                 </div>
             </div>
         </AutoHideScrollbar>
