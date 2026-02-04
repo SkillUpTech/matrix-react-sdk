@@ -50,6 +50,7 @@ export interface IComponentVisibilityCustomisations {
 // A real customisation module will define and export one or more of the
 // customisation points that make up the interface above.
 export const ComponentVisibilityCustomisations: IComponentVisibilityCustomisations = {
+    shouldShowComponent,
     // while we don't specify the functions here, their defaults are described
     // in their pseudo-implementations above.
 };

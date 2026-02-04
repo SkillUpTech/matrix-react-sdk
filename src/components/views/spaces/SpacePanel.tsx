@@ -385,7 +385,6 @@ const SpacePanel: React.FC = () => {
                                 }
                             />
                         </UserMenu>
-                        <p> TEST</p>
                         <Droppable droppableId="top-level-spaces">
                             {(provided, snapshot) => (
                                 <InnerSpacePanel
