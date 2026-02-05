@@ -215,11 +215,12 @@ const DmAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex, dispatcher = default
 };
 
 const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
+    return null;
     const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLDivElement>();
     const activeSpace = useEventEmitterState<Room | null>(SpaceStore.instance, UPDATE_SELECTED_SPACE, () => {
         return SpaceStore.instance.activeSpaceRoom;
     });
-
+    
     const showCreateRoom = false;
     // const showCreateRoom = shouldShowComponent(UIComponent.CreateRooms);
     const showExploreRooms = shouldShowComponent(UIComponent.ExploreRooms);
@@ -406,7 +407,7 @@ const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
     }
 
     // SC: Just show the button, no menu
-    return scAddRoomButton;
+    // return scAddRoomButton;
 
     let contextMenu: JSX.Element | null = null;
     if (menuDisplayed && handle.current) {

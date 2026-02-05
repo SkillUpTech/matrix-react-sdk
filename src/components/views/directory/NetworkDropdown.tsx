@@ -239,7 +239,7 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
                       })
                     : _t("Show: Matrix rooms")
             }
-            AdditionalOptions={addNewServer}
+            // AdditionalOptions={addNewServer}
         />
     );
 };

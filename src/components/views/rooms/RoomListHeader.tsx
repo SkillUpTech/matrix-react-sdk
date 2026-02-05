@@ -439,7 +439,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
                     <InlineSpinner />
                 </TooltipTarget>
             ) : null}
-            {spaceExploreButton}
+            {/* {spaceExploreButton} */}
             {canShowPlusMenu && (
                 <ContextMenuTooltipButton
                     inputRef={plusMenuHandle}

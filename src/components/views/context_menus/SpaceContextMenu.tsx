@@ -247,11 +247,11 @@ const SpaceContextMenu: React.FC<IProps> = ({ space, hideHeader, onFinished, ...
                     onClick={onHomeClick}
                 />
                 {inviteOption}
-                <IconizedContextMenuOption
+                {/* <IconizedContextMenuOption
                     iconClassName="mx_SpacePanel_iconExplore"
                     label={canAddRooms ? _t("Manage & explore rooms") : _t("Explore rooms")}
                     onClick={onExploreRoomsClick}
-                />
+                /> */}
                 <IconizedContextMenuOption
                     iconClassName="mx_SpacePanel_iconPreferences"
                     label={_t("Preferences")}

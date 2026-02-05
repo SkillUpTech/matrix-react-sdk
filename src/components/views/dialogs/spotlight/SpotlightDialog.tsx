@@ -962,9 +962,9 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                 {spaceRoomsSection}
                 {publicRoomsSection}
                 {joinRoomSection}
-                {hiddenResultsSection}
+                {/* {hiddenResultsSection} */}
                 {otherSearchesSection}
-                {groupChatSection}
+                {/* {groupChatSection} */}
                 {messageSearchSection}
             </>
         );

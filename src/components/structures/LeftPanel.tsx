@@ -365,7 +365,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                 <RoomSearch isMinimized={this.props.isMinimized} />
 
                 {dialPadButton}
-                {rightButton}
+                {/* {rightButton} */}
             </div>
         );
     }
