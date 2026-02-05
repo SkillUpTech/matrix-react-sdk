@@ -1253,6 +1253,12 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     public render(): React.ReactNode {
+        // Hide the invite dialog for room/space invites
+        if (this.props.kind === InviteKind.Invite) {
+            this.props.onFinished(false);
+            return null;
+        }
+
         let spinner: JSX.Element | undefined;
         if (this.state.busy) {
             spinner = <Spinner w={20} h={20} />;
