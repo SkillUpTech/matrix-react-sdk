@@ -42,6 +42,8 @@ import { LocalRoom } from "../../../models/LocalRoom";
 import { shouldEncryptRoomWithSingle3rdPartyInvite } from "../../../utils/room/shouldEncryptRoomWithSingle3rdPartyInvite";
 
 function hasExpectedEncryptionSettings(matrixClient: MatrixClient, room: Room): boolean {
+    //force encryptation setting as not
+    return false;
     const isEncrypted: boolean = matrixClient.isRoomEncrypted(room.roomId);
     const isPublic: boolean = room.getJoinRule() === "public";
     return isPublic || !privateShouldBeEncrypted(matrixClient) || isEncrypted;
@@ -259,7 +261,7 @@ const NewRoomIntro: React.FC = () => {
                     )}
                 </p>
                 <p>{topicText}</p>
-                {buttons}
+                {/* {buttons} */}
             </React.Fragment>
         );
     }

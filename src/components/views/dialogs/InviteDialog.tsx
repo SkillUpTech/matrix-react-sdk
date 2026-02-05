@@ -1253,6 +1253,12 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     public render(): React.ReactNode {
+        // Hide the invite dialog for room/space invites
+        if (this.props.kind === InviteKind.Invite) {
+            this.props.onFinished(false);
+            return null;
+        }
+
         let spinner: JSX.Element | undefined;
         if (this.state.busy) {
             spinner = <Spinner w={20} h={20} />;
@@ -1327,81 +1333,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 </div>
             );
         } else if (this.props.kind === InviteKind.Invite) {
-            const roomId = this.props.roomId;
-            const room = MatrixClientPeg.get()?.getRoom(roomId);
-            const isSpace = room?.isSpaceRoom();
-            title = isSpace
-                ? _t("Invite to %(spaceName)s", {
-                      spaceName: room?.name || _t("Unnamed Space"),
-                  })
-                : _t("Invite to %(roomName)s", {
-                      roomName: room?.name || _t("Unnamed Room"),
-                  });
-
-            let helpTextUntranslated;
-            if (isSpace) {
-                if (identityServersEnabled) {
-                    helpTextUntranslated = _td(
-                        "Invite someone using their name, email address, username " +
-                            "(like <userId/>) or <a>share this space</a>.",
-                    );
-                } else {
-                    helpTextUntranslated = _td(
-                        "Invite someone using their name, username " + "(like <userId/>) or <a>share this space</a>.",
-                    );
-                }
-            } else {
-                if (identityServersEnabled) {
-                    helpTextUntranslated = _td(
-                        "Invite someone using their name, email address, username " +
-                            "(like <userId/>) or <a>share this room</a>.",
-                    );
-                } else {
-                    helpTextUntranslated = _td(
-                        "Invite someone using their name, username " + "(like <userId/>) or <a>share this room</a>.",
-                    );
-                }
-            }
-
-            helpText = _t(
-                helpTextUntranslated,
-                {},
-                {
-                    userId: () => (
-                        <a
-                            className="mx_InviteDialog_helpText_userId"
-                            href={makeUserPermalink(userId)}
-                            rel="noreferrer noopener"
-                            target="_blank"
-                        >
-                            {userId}
-                        </a>
-                    ),
-                    a: (sub) => (
-                        <a href={makeRoomPermalink(cli, roomId)} rel="noreferrer noopener" target="_blank">
-                            {sub}
-                        </a>
-                    ),
-                },
-            );
-
-            buttonText = _t("Invite");
-            goButtonFn = this.inviteUsers;
-
-            if (cli.isRoomEncrypted(this.props.roomId)) {
-                const room = cli.getRoom(this.props.roomId)!;
-                const visibilityEvent = room.currentState.getStateEvents("m.room.history_visibility", "");
-                const visibility =
-                    visibilityEvent && visibilityEvent.getContent() && visibilityEvent.getContent().history_visibility;
-                if (visibility === "world_readable" || visibility === "shared") {
-                    keySharingWarning = (
-                        <p className="mx_InviteDialog_helpText">
-                            <InfoIcon height={14} width={14} />
-                            {" " + _t("Invited people will be able to read old messages.")}
-                        </p>
-                    );
-                }
-            }
+            // Hide the invite to room/space UI - return null to hide the dialog
+            return null;
         } else if (this.props.kind === InviteKind.CallTransfer) {
             title = _t("Transfer");
 
