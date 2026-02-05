@@ -261,7 +261,7 @@ const NewRoomIntro: React.FC = () => {
                     )}
                 </p>
                 <p>{topicText}</p>
-                {buttons}
+                {/* {buttons} */}
             </React.Fragment>
         );
     }
