@@ -254,6 +254,8 @@ export default class DeviceListener {
     }
 
     private shouldShowSetupEncryptionToast(): boolean {
+        // FORCE AVOID SHOW ENCRIPT TOAST
+        return false;
         // If we're in the middle of a secret storage operation, we're likely
         // modifying the state involved here, so don't add new toasts to setup.
         if (isSecretStorageBeingAccessed()) return false;

@@ -440,7 +440,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
                 </TooltipTarget>
             ) : null}
             {/* {spaceExploreButton} */}
-            {canShowPlusMenu && (
+            {/* {canShowPlusMenu && (
                 <ContextMenuTooltipButton
                     inputRef={plusMenuHandle}
                     onClick={openPlusMenu}
@@ -448,7 +448,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
                     className="mx_RoomListHeader_plusButton"
                     title={_t("Add")}
                 />
-            )}
+            )} */}
 
             {contextMenu}
         </div>
