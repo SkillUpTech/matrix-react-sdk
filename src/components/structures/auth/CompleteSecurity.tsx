@@ -36,10 +36,12 @@ export default class CompleteSecurity extends React.Component<IProps, IState> {
     public constructor(props: IProps) {
         super(props);
         const store = SetupEncryptionStore.sharedInstance();
-        store.skip();
+        store.skipConfirm();
         store.on("update", this.onStoreUpdate);
         store.start();
         this.state = { phase: store.phase, lostKeys: store.lostKeys() };
+        // Immediately close the dialog to skip verification
+        setTimeout(() => this.props.onFinished(), 0);
     }
 
     private onStoreUpdate = (): void => {
