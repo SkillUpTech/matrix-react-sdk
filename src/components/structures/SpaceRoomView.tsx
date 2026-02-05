@@ -124,7 +124,7 @@ const SpaceLandingAddButton: React.FC<{ space: Room }> = ({ space }) => {
                 compact
             >
                 <IconizedContextMenuOptionList first>
-                    {canCreateRoom && (
+                    {/* {canCreateRoom && (
                         <>
                             <IconizedContextMenuOption
                                 label={_t("New room")}
@@ -165,7 +165,7 @@ const SpaceLandingAddButton: React.FC<{ space: Room }> = ({ space }) => {
                                 </IconizedContextMenuOption>
                             )}
                         </>
-                    )}
+                    )} */}
                     <IconizedContextMenuOption
                         label={_t("Add existing room")}
                         iconClassName="mx_RoomList_iconAddExistingRoom"
@@ -176,7 +176,7 @@ const SpaceLandingAddButton: React.FC<{ space: Room }> = ({ space }) => {
                             showAddExistingRooms(space);
                         }}
                     />
-                    {canCreateSpace && (
+                    {/* {canCreateSpace && (
                         <IconizedContextMenuOption
                             label={_t("Add space")}
                             iconClassName="mx_RoomList_iconPlus"
@@ -189,7 +189,7 @@ const SpaceLandingAddButton: React.FC<{ space: Room }> = ({ space }) => {
                         >
                             <BetaPill />
                         </IconizedContextMenuOption>
-                    )}
+                    )} */}
                 </IconizedContextMenuOptionList>
             </IconizedContextMenu>
         );

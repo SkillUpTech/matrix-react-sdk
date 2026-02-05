@@ -33,7 +33,11 @@ import { UIComponent } from "../settings/UIFeature";
  * otherwise.
  */
 function shouldShowComponent(component: UIComponent): boolean {
-    return true; // default to visible
+    const hiddenComponents: UIComponent[] = [
+        UIComponent.CreateSpaces,
+        UIComponent.CreateRooms,
+    ];
+    return !hiddenComponents.includes(component);
 }
 
 // This interface summarises all available customisation points and also marks
@@ -46,6 +50,7 @@ export interface IComponentVisibilityCustomisations {
 // A real customisation module will define and export one or more of the
 // customisation points that make up the interface above.
 export const ComponentVisibilityCustomisations: IComponentVisibilityCustomisations = {
+    shouldShowComponent,
     // while we don't specify the functions here, their defaults are described
     // in their pseudo-implementations above.
 };

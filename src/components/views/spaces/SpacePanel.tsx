@@ -399,7 +399,7 @@ const SpacePanel: React.FC = () => {
                             )}
                         </Droppable>
 
-                        <QuickSettingsButton isPanelCollapsed={isPanelCollapsed} />
+                        {/* <QuickSettingsButton isPanelCollapsed={isPanelCollapsed} /> */}
                     </div>
                 </DragDropContext>
             )}
