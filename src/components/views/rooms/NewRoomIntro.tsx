@@ -298,6 +298,8 @@ const NewRoomIntro: React.FC = () => {
             {subText} {subButton}{" "}
         </span>
     );
+    // force avoid end-to-end encript from intro new users
+    return null;
 
     return (
         <li className="mx_NewRoomIntro">
