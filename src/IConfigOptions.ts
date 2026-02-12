@@ -125,6 +125,7 @@ export interface IConfigOptions {
     };
 
     logout_redirect_url?: string;
+    logout_postmessage_origins?: string[];
 
     // sso_immediate_redirect is deprecated in favour of sso_redirect_options.immediate
     sso_immediate_redirect?: boolean;

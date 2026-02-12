@@ -427,6 +427,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
 
     public componentDidMount(): void {
         window.addEventListener("resize", this.onWindowResized);
+        window.addEventListener("message", this.onWindowMessage);
     }
 
     public componentDidUpdate(prevProps: IProps, prevState: IState): void {
@@ -450,9 +451,33 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         UIStore.destroy();
         this.state.resizeNotifier.removeListener("middlePanelResized", this.dispatchTimelineResize);
         window.removeEventListener("resize", this.onWindowResized);
+        window.removeEventListener("message", this.onWindowMessage);
 
         this.stores.accountPasswordStore.clearPassword();
         this.voiceBroadcastResumer?.destroy();
+    }
+
+    private onWindowMessage = (event: MessageEvent): void => {
+        const data = event.data as { type?: string } | null;
+        if (!data || typeof data !== "object" || data.type !== "matrix_logout") {
+            return;
+        }
+
+        if (!this.isAllowedLogoutOrigin(event.origin)) {
+            logger.warn("Ignoring logout postMessage from untrusted origin", event.origin);
+            return;
+        }
+
+        dis.dispatch({ action: "logout" });
+    };
+
+    private isAllowedLogoutOrigin(origin: string): boolean {
+        const origins = this.props.config.logout_postmessage_origins;
+        if (!origins || origins.length === 0) {
+            return false;
+        }
+
+        return origins.includes(origin);
     }
 
     private onWindowResized = (): void => {
