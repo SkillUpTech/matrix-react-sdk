@@ -43,7 +43,7 @@ const ANNOTATE_STRINGS = false;
 counterpart.setSeparator("|");
 
 // see `translateWithFallback` for an explanation of fallback handling
-const FALLBACK_LOCALE = "en";
+const FALLBACK_LOCALE = "pt";
 counterpart.setFallbackLocale(FALLBACK_LOCALE);
 
 interface ErrorOptions {
@@ -513,7 +513,7 @@ export function getAllLanguagesFromJson(): Promise<Language[]> {
 export function getLanguagesFromBrowser(): readonly string[] {
     if (navigator.languages && navigator.languages.length) return navigator.languages;
     if (navigator.language) return [navigator.language];
-    return [navigator.userLanguage || "en"];
+    return [navigator.userLanguage || "pt"];
 }
 
 export function getLanguageFromBrowser(): string {
