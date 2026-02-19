@@ -73,7 +73,7 @@ export default class GeneralRoomSettingsTab extends React.Component<IProps, ISta
         ) : null;
 
         let leaveSection;
-        if (room.getMyMembership() === "join") {
+        /* if (room.getMyMembership() === "join") {
             leaveSection = (
                 <SettingsSubsection heading={_t("Leave room")}>
                     <AccessibleButton kind="danger" onClick={this.onLeaveClick}>
@@ -81,7 +81,7 @@ export default class GeneralRoomSettingsTab extends React.Component<IProps, ISta
                     </AccessibleButton>
                 </SettingsSubsection>
             );
-        }
+        } */
 
         return (
             <SettingsTab data-testid="General">

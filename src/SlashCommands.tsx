@@ -739,7 +739,7 @@ export const Commands = [
         args: "[<room-address>]",
         description: _td("Leave room"),
         analyticsName: "Part",
-        isEnabled: (cli) => !isCurrentLocalRoom(cli),
+        isEnabled: () => false, // Disabled: users cannot leave channels // (cli) => !isCurrentLocalRoom(cli),
         runFn: function (cli, roomId, threadId, args) {
             let targetRoomId: string | undefined;
             if (args) {

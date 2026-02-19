@@ -215,7 +215,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
         />
     );
 
-    let leaveOption: JSX.Element;
+    let leaveOption: JSX.Element | undefined;
     if (roomTags.includes(DefaultTagID.Archived)) {
         leaveOption = (
             <IconizedContextMenuOption
@@ -232,7 +232,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
                 )}
             />
         );
-    } else {
+    } /* else {
         leaveOption = (
             <IconizedContextMenuOption
                 onClick={wrapHandler(
@@ -248,7 +248,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
                 iconClassName="mx_RoomGeneralContextMenu_iconSignOut"
             />
         );
-    }
+    } */
 
     // const { color } = useUnreadNotifications(room);
     // const markAsReadOption: JSX.Element | null =
@@ -284,7 +284,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
                 )}
                 {developerToolsOption}
             </IconizedContextMenuOptionList>
-            <IconizedContextMenuOptionList red>{leaveOption}</IconizedContextMenuOptionList>
+            {leaveOption && <IconizedContextMenuOptionList red>{leaveOption}</IconizedContextMenuOptionList>}
         </IconizedContextMenu>
     );
 };
