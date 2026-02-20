@@ -43,7 +43,7 @@ const ANNOTATE_STRINGS = false;
 counterpart.setSeparator("|");
 
 // see `translateWithFallback` for an explanation of fallback handling
-const FALLBACK_LOCALE = "en";
+const FALLBACK_LOCALE = "pt";
 counterpart.setFallbackLocale(FALLBACK_LOCALE);
 
 interface ErrorOptions {
@@ -91,13 +91,21 @@ export class UserFriendlyError extends Error {
     }
 }
 
+function getOpenEdXCookieLanguage(): string | null {
+    const match = document.cookie.match(/(?:^|;\s*)openedx-language-preference=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
 export function getUserLanguage(): string {
     const language = SettingsStore.getValue("language", null, /*excludeDefault:*/ true);
     if (language) {
         return language;
-    } else {
-        return normalizeLanguageKey(getLanguageFromBrowser());
     }
+    const cookieLang = getOpenEdXCookieLanguage();
+    if (cookieLang) {
+        return normalizeLanguageKey(cookieLang);
+    }
+    return normalizeLanguageKey(getLanguageFromBrowser());
 }
 
 // Function which only purpose is to mark that a string is translatable
@@ -513,7 +521,7 @@ export function getAllLanguagesFromJson(): Promise<Language[]> {
 export function getLanguagesFromBrowser(): readonly string[] {
     if (navigator.languages && navigator.languages.length) return navigator.languages;
     if (navigator.language) return [navigator.language];
-    return [navigator.userLanguage || "en"];
+    return [navigator.userLanguage || "pt"];
 }
 
 export function getLanguageFromBrowser(): string {
