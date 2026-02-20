@@ -87,7 +87,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
                 onClick={onForgetRoomClick}
             />
         );
-    } else {
+    } /* else {
         const onLeaveRoomClick = (ev: ButtonEvent): void => {
             ev.preventDefault();
             ev.stopPropagation();
@@ -109,7 +109,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
                 iconClassName="mx_RoomTile_iconSignOut"
             />
         );
-    }
+    } */
 
     const isDm = DMRoomMap.shared().getUserIdForRoomId(room.roomId);
     const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");

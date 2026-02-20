@@ -75,7 +75,8 @@ const RoomPreviewCard: FC<IProps> = ({ room, onJoinButtonClicked, onRejectButton
     let inviterSection: JSX.Element | null = null;
     let joinButtons: JSX.Element;
     if (myMembership === "join") {
-        joinButtons = (
+        joinButtons = <></>;
+        /* joinButtons = (
             <AccessibleButton
                 kind="danger_outline"
                 onClick={() => {
@@ -87,7 +88,7 @@ const RoomPreviewCard: FC<IProps> = ({ room, onJoinButtonClicked, onRejectButton
             >
                 {_t("Leave")}
             </AccessibleButton>
-        );
+        ); */
     } else if (myMembership === "invite") {
         const inviteSender = room.getMember(cli.getUserId()!)?.events.member?.getSender();
 

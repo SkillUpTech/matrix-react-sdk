@@ -666,7 +666,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 });
                 break;
             case "leave_room":
-                this.leaveRoom(payload.room_id);
+                // this.leaveRoom(payload.room_id); // Disabled: users cannot leave channels
                 break;
             case "forget_room":
                 this.forgetRoom(payload.room_id);
