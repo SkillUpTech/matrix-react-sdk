@@ -225,6 +225,7 @@ const SpaceLanding: React.FC<{ space: Room }> = ({ space }) => {
     const isShowingMembers = useEventEmitterState(RightPanelStore.instance, UPDATE_EVENT, storeIsShowingSpaceMembers);
 
     let inviteButton;
+    /* Disabled: invite feature is hidden
     if (shouldShowSpaceInvite(space) && shouldShowComponent(UIComponent.InviteUsers)) {
         inviteButton = (
             <AccessibleButton
@@ -237,7 +238,7 @@ const SpaceLanding: React.FC<{ space: Room }> = ({ space }) => {
                 {_t("Invite")}
             </AccessibleButton>
         );
-    }
+    } */
 
     const hasAddRoomPermissions =
         myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId);

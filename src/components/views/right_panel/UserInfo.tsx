@@ -447,6 +447,7 @@ export const UserOptionsSection: React.FC<{
         }
 
         if (
+            false && // Disabled: invite feature is hidden
             member instanceof RoomMember &&
             canInvite &&
             (member?.membership ?? "leave") === "leave" &&

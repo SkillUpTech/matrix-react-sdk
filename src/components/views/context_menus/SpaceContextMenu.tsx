@@ -52,6 +52,7 @@ const SpaceContextMenu: React.FC<IProps> = ({ space, hideHeader, onFinished, ...
     const userId = cli.getUserId()!;
 
     let inviteOption: JSX.Element | null = null;
+    /* Disabled: invite feature is hidden
     if (space.getJoinRule() === "public" || space.canInvite(userId)) {
         const onInviteClick = (ev: ButtonEvent): void => {
             ev.preventDefault();
@@ -70,7 +71,7 @@ const SpaceContextMenu: React.FC<IProps> = ({ space, hideHeader, onFinished, ...
                 onClick={onInviteClick}
             />
         );
-    }
+    } */
 
     let settingsOption: JSX.Element | null = null;
     let leaveOption: JSX.Element | null = null;
