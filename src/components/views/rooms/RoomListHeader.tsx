@@ -179,6 +179,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
         );
     } else if (plusMenuDisplayed && activeSpace) {
         let inviteOption: JSX.Element | undefined;
+        /* Disabled: invite feature is hidden
         if (shouldShowSpaceInvite(activeSpace)) {
             inviteOption = (
                 <IconizedContextMenuOption
@@ -192,7 +193,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
                     }}
                 />
             );
-        }
+        } */
 
         let newRoomOptions: JSX.Element | undefined;
         if (activeSpace?.currentState.maySendStateEvent(EventType.RoomAvatar, cli.getUserId()!)) {

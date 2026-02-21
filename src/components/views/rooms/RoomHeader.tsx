@@ -612,6 +612,7 @@ export default class RoomHeader extends React.Component<IProps, IState> {
             );
         }
 
+        /* Disabled: invite feature is hidden
         if (this.props.onInviteClick && (!this.props.viewingCall || isVideoRoom) && this.props.inRoom) {
             startButtons.push(
                 <AccessibleTooltipButton
@@ -622,7 +623,7 @@ export default class RoomHeader extends React.Component<IProps, IState> {
                     key="invite"
                 />,
             );
-        }
+        } */
 
         const endButtons: JSX.Element[] = [];
 
