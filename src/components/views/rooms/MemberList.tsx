@@ -352,6 +352,7 @@ export default class MemberList extends React.Component<IProps, IState> {
         const room = cli.getRoom(this.props.roomId);
         let inviteButton: JSX.Element | undefined;
 
+        /* Disabled: invite feature is hidden
         if (room?.getMyMembership() === "join" && shouldShowComponent(UIComponent.InviteUsers)) {
             let inviteButtonText = _t("Invite to this room");
             if (room.isSpaceRoom()) {
@@ -376,7 +377,7 @@ export default class MemberList extends React.Component<IProps, IState> {
                     </AccessibleTooltipButton>
                 );
             }
-        }
+        } */
 
         let invitedHeader;
         let invitedSection;

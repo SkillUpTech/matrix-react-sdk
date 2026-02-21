@@ -165,6 +165,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
     );
 
     let inviteOption: JSX.Element | null = null;
+    /* Disabled: invite feature is hidden
     if (room.canInvite(cli.getUserId()!) && !isDm && shouldShowComponent(UIComponent.InviteUsers)) {
         inviteOption = (
             <IconizedContextMenuOption
@@ -180,7 +181,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
                 iconClassName="mx_RoomGeneralContextMenu_iconInvite"
             />
         );
-    }
+    } */
 
     let copyLinkOption: JSX.Element | null = null;
     if (!isDm) {

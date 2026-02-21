@@ -118,6 +118,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
         videoRoomsEnabled && (room.isElementVideoRoom() || (elementCallVideoRoomsEnabled && room.isCallRoom()));
 
     let inviteOption: JSX.Element | undefined;
+    /* Disabled: invite feature is hidden
     if (room.canInvite(cli.getUserId()!) && !isDm && shouldShowComponent(UIComponent.InviteUsers)) {
         const onInviteClick = (ev: ButtonEvent): void => {
             ev.preventDefault();
@@ -139,7 +140,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
                 iconClassName="mx_RoomTile_iconInvite"
             />
         );
-    }
+    } */
 
     let favouriteOption: JSX.Element | undefined;
     let lowPriorityOption: JSX.Element | undefined;
