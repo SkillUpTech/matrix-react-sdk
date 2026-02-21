@@ -378,7 +378,8 @@ class NotifierClass {
     }
 
     public shouldShowPrompt(): boolean {
-        const client = MatrixClientPeg.get();
+        return false; // Disabled: desktop notification prompt is hidden
+        /* const client = MatrixClientPeg.get();
         if (!client) {
             return false;
         }
@@ -389,7 +390,7 @@ class NotifierClass {
             !isPushNotifyDisabled() &&
             !this.isEnabled() &&
             !this.isPromptHidden()
-        );
+        ); */
     }
 
     private isPromptHidden(): boolean {

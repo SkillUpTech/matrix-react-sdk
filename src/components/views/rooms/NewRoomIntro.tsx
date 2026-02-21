@@ -185,6 +185,7 @@ const NewRoomIntro: React.FC = () => {
             parentSpace = SpaceStore.instance.activeSpaceRoom;
         }
 
+        /* Disabled: invite feature is hidden
         let buttons: JSX.Element | undefined;
         if (parentSpace && shouldShowComponent(UIComponent.InviteUsers)) {
             buttons = (
@@ -225,7 +226,7 @@ const NewRoomIntro: React.FC = () => {
                     </AccessibleButton>
                 </div>
             );
-        }
+        } */
 
         const avatarUrl = room.currentState.getStateEvents(EventType.RoomAvatar, "")?.getContent()?.url;
         let avatar = (

@@ -549,7 +549,7 @@ export const Commands = [
         args: "<user-id> [<reason>]",
         description: _td("Invites user with given id to current room"),
         analyticsName: "Invite",
-        isEnabled: (cli) => !isCurrentLocalRoom(cli) && shouldShowComponent(UIComponent.InviteUsers),
+        isEnabled: () => false, // Disabled: invite feature is hidden // (cli) => !isCurrentLocalRoom(cli) && shouldShowComponent(UIComponent.InviteUsers),
         runFn: function (cli, roomId, threadId, args) {
             if (args) {
                 const [address, reason] = args.split(/\s+(.+)/);
