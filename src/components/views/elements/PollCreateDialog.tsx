@@ -63,7 +63,7 @@ const MAX_OPTION_LENGTH = 340;
 
 function creatingInitialState(): IState {
     return {
-        title: _t("Create poll"),
+        title: _t("Create Poll"),
         actionLabel: _t("Create Poll"),
         canSubmit: false, // need to add a question and at least one option first
         question: "",
