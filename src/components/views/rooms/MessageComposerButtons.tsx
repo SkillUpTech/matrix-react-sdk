@@ -19,7 +19,8 @@ import { IEventRelation } from "matrix-js-sdk/src/models/event";
 import { M_POLL_START } from "matrix-js-sdk/src/@types/polls";
 import React, { createContext, ReactElement, ReactNode, useContext, useRef } from "react";
 import { Room } from "matrix-js-sdk/src/models/room";
-import { MatrixClient } from "matrix-js-sdk/src/client";
+//  - Commented out unused imports for hidden features
+// import { MatrixClient } from "matrix-js-sdk/src/client"; // Used by commented showLocationButton function
 import { THREAD_RELATION_TYPE } from "matrix-js-sdk/src/models/thread";
 
 import { _t } from "../../../languageHandler";
@@ -28,7 +29,7 @@ import { CollapsibleButton } from "./CollapsibleButton";
 import { MenuProps } from "../../structures/ContextMenu";
 import dis from "../../../dispatcher/dispatcher";
 import ErrorDialog from "../dialogs/ErrorDialog";
-import LocationButton from "../location/LocationButton";
+// import LocationButton from "../location/LocationButton"; // Used by commented showLocationButton function
 import Modal from "../../../Modal";
 import PollCreateDialog from "../elements/PollCreateDialog";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
@@ -92,13 +93,17 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
                 emojiButton(props, room)
             ),
         ];
+        // JIRA Ticket: Hide microphone and location features
+        // Developer Note: The voice recording (microphone) and location sharing features
+        // have been hidden from all users as they are not relevant to the platform's current scope.
+        // These features can be re-enabled by uncommenting the lines below.
         moreButtons = [
             uploadButton(), // props passed via UploadButtonContext
             showStickersButton(props),
-            voiceRecordingButton(props, narrow),
+            // voiceRecordingButton(props, narrow), // HIDDEN: Voice/microphone recording feature
             startVoiceBroadcastButton(props),
             props.showPollsButton ? pollButton(room, props.relation) : null,
-            showLocationButton(props, room, matrixClient),
+            // showLocationButton(props, room, matrixClient), // HIDDEN: Location sharing feature
         ];
     } else if (props.collapseButtons) {
         mainButtons = [
@@ -113,14 +118,18 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
             ),
             uploadButton(), // props passed via UploadButtonContext
         ];
+        //  - Hide microphone and location features
+        // Developer Note: Collapsed button mode also has these features hidden
         moreButtons = [
             showStickersButton(props),
-            voiceRecordingButton(props, narrow),
+            // voiceRecordingButton(props, narrow), // HIDDEN: Voice/microphone recording feature
             startVoiceBroadcastButton(props),
             props.showPollsButton && pollButton(room, props.relation),
-            showLocationButton(props, room, matrixClient),
+            // showLocationButton(props, room, matrixClient), // HIDDEN: Location sharing feature
         ];
     } else {
+        //  - Hide microphone and location features
+        // Developer Note: Default layout also has these features hidden
         mainButtons = [
             isWysiwygLabEnabled ? (
                 <ComposerModeButton
@@ -133,10 +142,10 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
             ),
             uploadButton(), // props passed via UploadButtonContext
             showStickersButton(props),
-            voiceRecordingButton(props, narrow),
+            // voiceRecordingButton(props, narrow), // HIDDEN: Voice/microphone recording feature
             startVoiceBroadcastButton(props),
             props.showPollsButton ? pollButton(room, props.relation) : null,
-            showLocationButton(props, room, matrixClient),
+            // showLocationButton(props, room, matrixClient), // HIDDEN: Location sharing feature
         ];
         moreButtons = [];
     }
@@ -302,6 +311,12 @@ const startVoiceBroadcastButton: React.FC<IProps> = (props: IProps): ReactElemen
     ) : null;
 };
 
+// HIDDEN FEATURE: Voice/Microphone Recording Button
+// Developer Note: This function creates the voice message/microphone recording button.
+// It has been commented out to hide the microphone feature from all users as it is not
+// supported within the platform's current scope. To re-enable, uncomment this function
+// and the corresponding calls in the button arrays above.
+/*
 function voiceRecordingButton(props: IProps, narrow: boolean): ReactElement | null {
     // XXX: recording UI does not work well in narrow mode, so hide for now
     return narrow ? null : (
@@ -314,6 +329,7 @@ function voiceRecordingButton(props: IProps, narrow: boolean): ReactElement | nu
         />
     );
 }
+*/
 
 function pollButton(room: Room, relation?: IEventRelation): ReactElement {
     return <PollButton key="polls" room={room} relation={relation} />;
@@ -371,6 +387,12 @@ class PollButton extends React.PureComponent<IPollButtonProps> {
     }
 }
 
+// HIDDEN FEATURE: Location Sharing Button
+// Developer Note: This function creates the location sharing button.
+// It has been commented out to hide the location/localization feature from all users
+// as it is not relevant to the platform's current scope. To re-enable, uncomment this
+// function and the corresponding calls in the button arrays above.
+/*
 function showLocationButton(props: IProps, room: Room, matrixClient: MatrixClient): ReactElement | null {
     const sender = room.getMember(matrixClient.getSafeUserId());
 
@@ -384,6 +406,7 @@ function showLocationButton(props: IProps, room: Room, matrixClient: MatrixClien
         />
     ) : null;
 }
+*/
 
 interface WysiwygToggleButtonProps {
     isRichTextEnabled: boolean;

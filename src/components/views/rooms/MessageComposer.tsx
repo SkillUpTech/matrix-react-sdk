@@ -532,6 +532,12 @@ export class MessageComposer extends React.Component<IProps, IState> {
                 );
             }
 
+            //  - Hide microphone feature
+            // Developer Note: VoiceRecordComposerTile component handles voice message recording.
+            // It has been commented out to completely disable the microphone/voice recording feature
+            // for all users as it is not supported within the platform's current scope.
+            // To re-enable, uncomment the code below.
+            /*
             controls.push(
                 <VoiceRecordComposerTile
                     key="controls_voice_record"
@@ -542,6 +548,7 @@ export class MessageComposer extends React.Component<IProps, IState> {
                     replyToEvent={this.props.replyToEvent}
                 />,
             );
+            */
         } else if (this.context.tombstone) {
             const replacementRoomId = this.context.tombstone.getContent()["replacement_room"];
 
@@ -650,9 +657,11 @@ export class MessageComposer extends React.Component<IProps, IState> {
                                     relation={this.props.relation}
                                     onRecordStartEndClick={this.onRecordStartEndClick}
                                     setStickerPickerOpen={this.setStickerPickerOpen}
-                                    showLocationButton={
-                                        !window.electron && SettingsStore.getValue(UIFeature.LocationSharing)
-                                    }
+                                    //  - Force location feature to be hidden
+                                    // Developer Note: Setting showLocationButton to false ensures location sharing
+                                    // is disabled for all users regardless of settings or configuration.
+                                    // Original code: !window.electron && SettingsStore.getValue(UIFeature.LocationSharing)
+                                    showLocationButton={false}
                                     showPollsButton={this.state.showPollsButton}
                                     showStickersButton={this.showStickersButton}
                                     collapseButtons={this.state.collapseButtons}
