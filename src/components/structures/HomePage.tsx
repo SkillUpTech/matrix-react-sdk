@@ -33,6 +33,22 @@ import MiniAvatarUploader, { AVATAR_SIZE } from "../views/elements/MiniAvatarUpl
 import PosthogTrackers from "../../PosthogTrackers";
 import EmbeddedPage from "./EmbeddedPage";
 import eaLogo from "../../../res/img/ea-logo.png";
+import { LMSRoleStore } from "../../stores/LMSRoleStore";
+
+const useLMSRole = (): string | null => {
+    const [role, setRole] = useState(LMSRoleStore.instance.getRole());
+    useEventEmitter(LMSRoleStore.instance, UPDATE_EVENT, () => {
+        setRole(LMSRoleStore.instance.getRole());
+    });
+    return role;
+};
+
+const getWelcomeSubtextKey = (role: string | null): string => {
+    if (role?.toLowerCase() === "teacher") {
+        return "This is where you'll take part in conversations, announcements, and group discussions related to your classes.";
+    }
+    return "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.";
+};
 
 const onClickSendDm = (ev: ButtonEvent): void => {
     PosthogTrackers.trackInteraction("WebHomeCreateChatButton", ev);
@@ -70,13 +86,14 @@ const UserWelcomeTop: React.FC = () => {
     useEventEmitter(OwnProfileStore.instance, UPDATE_EVENT, () => {
         setOwnProfile(getOwnProfile(userId));
     });
+    const lmsRole = useLMSRole();
 
     return (
         <div>
             {/* <MiniAvatarUploader
                 hasAvatar={!!ownProfile.avatarUrl}
-                hasAvatarLabel={_tDom("Great, that'll help people know it's you")}
-                noAvatarLabel={_tDom("Add a photo so people know it's you.")}
+                hasAvatarLabel={_tDom("Great, that’ll help people know it’s you")}
+                noAvatarLabel={_tDom("Add a photo so people know it’s you.")}
                 setAvatarUrl={(url) => cli.setAvatarUrl(url)}
                 isUserAvatar
                 onClick={(ev) => PosthogTrackers.trackInteraction("WebHomeMiniAvatarUploadButton", ev)}
@@ -92,7 +109,7 @@ const UserWelcomeTop: React.FC = () => {
             </MiniAvatarUploader> */}
             <img src={eaLogo} alt="eA Logo" style={{ width: 115, height: 74, marginBottom: 12 }} />
             <h1>{_tDom("Welcome to your eA communication space")}</h1>
-            <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
+            <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
         </div>
     );
 };
@@ -101,6 +118,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     const cli = useMatrixClientContext();
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config, cli);
+    const lmsRole = useLMSRole();
 
     if (pageUrl) {
         return <EmbeddedPage className="mx_HomePage" url={pageUrl} scrollbar={true} />;
@@ -117,7 +135,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
             <React.Fragment>
                 <img src={logoUrl} alt={config.brand} />
                 <h1>{_tDom("Welcome to your eA communication space")}</h1>
-                <h2>{_tDom("This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.")}</h2>
+                <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
             </React.Fragment>
         );
     }

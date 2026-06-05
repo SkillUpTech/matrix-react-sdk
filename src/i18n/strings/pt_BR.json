@@ -1676,6 +1676,7 @@
     "%(senderName)s ended the call": "%(senderName)s encerrou a chamada",
     "You ended the call": "Encerrou a chamada",
     "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas atividades de aprendizagem.",
+    "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas turmas.",
     "Don't miss a reply": "Não perca uma resposta",
     "Enable desktop notifications": "Ativar notificações na ambiente de trabalho",
     "Welcome %(name)s": "Boas-vindas, %(name)s",
