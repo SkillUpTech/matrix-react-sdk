@@ -19,6 +19,7 @@ limitations under the License.
 
 import React from "react";
 import { RoomEvent, Room } from "matrix-js-sdk/src/models/room";
+import { EventType } from "matrix-js-sdk/src/@types/event";
 
 import TabbedView, { Tab } from "../../structures/TabbedView";
 import { _t, _td } from "../../../languageHandler";
@@ -151,15 +152,17 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                 "RoomSettingsSecurityPrivacy",
             ),
         );
-        tabs.push(
-            new Tab(
-                RoomSettingsTab.Roles,
-                _td("Roles & Permissions"),
-                "mx_RoomSettingsDialog_rolesIcon",
-                <RolesRoomSettingsTab room={this.state.room} />,
-                "RoomSettingsRolesPermissions",
-            ),
-        );
+        if (this.state.room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, MatrixClientPeg.safeGet())) {
+            tabs.push(
+                new Tab(
+                    RoomSettingsTab.Roles,
+                    _td("Roles & Permissions"),
+                    "mx_RoomSettingsDialog_rolesIcon",
+                    <RolesRoomSettingsTab room={this.state.room} />,
+                    "RoomSettingsRolesPermissions",
+                ),
+            );
+        }
         tabs.push(
             new Tab(
                 RoomSettingsTab.Notifications,
