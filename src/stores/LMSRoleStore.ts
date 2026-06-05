@@ -89,7 +89,8 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
 
         const lmsBaseUrl = SdkConfig.get("lms_base_url");
         if (!lmsBaseUrl) {
-            logger.warn("[LMSRoleStore] lms_base_url not configured — role restrictions will apply");
+            logger.warn("[LMSRoleStore] lms_base_url not configured in config.json — defaulting to Student restrictions");
+            console.warn("[LMSRoleStore] lms_base_url not configured in config.json — defaulting to Student restrictions");
             await this.updateState({ role: null, fetched: true });
             return;
         }
@@ -101,22 +102,39 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
         const colonIdx = userId.indexOf(":");
         const username = userId.slice(1, colonIdx > 0 ? colonIdx : undefined);
 
+        const base = lmsBaseUrl.replace(/\/$/, "");
+        const url = `${base}/oauth2/getuserinfo/${encodeURIComponent(username)}`;
+
+        console.group("[LMSRoleStore] Fetching user role");
+        console.log("Matrix userId:", userId);
+        console.log("LMS username:", username);
+        console.log("Request URL:", url);
+
         try {
-            const base = lmsBaseUrl.replace(/\/$/, "");
-            const url = `${base}/oauth2/getuserinfo/${encodeURIComponent(username)}`;
             const response = await fetch(url, { method: "GET" });
 
+            console.log("HTTP status:", response.status);
+
             if (!response.ok) {
+                console.warn(`[LMSRoleStore] Fetch failed (HTTP ${response.status}) — defaulting to Student`);
+                console.groupEnd();
                 logger.warn(`[LMSRoleStore] Role fetch failed: HTTP ${response.status} — defaulting to Student`);
                 await this.updateState({ role: null, fetched: true });
                 return;
             }
 
             const data = await response.json();
+            console.log("API response:", data);
+
             const role: LMSRole | null = typeof data.user_role === "string" ? data.user_role : null;
+            console.log("Resolved role:", role);
+            console.groupEnd();
+
             logger.info(`[LMSRoleStore] Role fetched for ${username}: ${role}`);
             await this.updateState({ role, fetched: true });
         } catch (e) {
+            console.error("[LMSRoleStore] Network error — defaulting to Student:", e);
+            console.groupEnd();
             logger.error("[LMSRoleStore] Network error fetching role — defaulting to Student:", e);
             await this.updateState({ role: null, fetched: true });
         }

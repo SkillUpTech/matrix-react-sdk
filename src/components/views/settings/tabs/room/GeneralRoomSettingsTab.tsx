@@ -98,6 +98,12 @@ export default class GeneralRoomSettingsTab extends React.Component<IProps, ISta
         } */
 
         const isStudent = LMSRoleStore.instance.isStudent();
+        const role = LMSRoleStore.instance.getRole();
+        console.log(
+            "[GeneralRoomSettingsTab] role =", role,
+            "| isStudent =", isStudent,
+            "| Room Addresses section:", isStudent ? "HIDDEN" : "VISIBLE",
+        );
 
         return (
             <SettingsTab data-testid="General">
