@@ -208,6 +208,9 @@ export interface IConfigOptions {
             client_id: string;
         }
     >;
+
+    // Base URL of the LMS platform used to fetch user role via /oauth2/getuserinfo/<username>
+    lms_base_url?: string;
 }
 
 export interface ISsoRedirectOptions {

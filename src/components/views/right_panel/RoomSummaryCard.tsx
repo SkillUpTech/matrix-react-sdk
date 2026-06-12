@@ -17,6 +17,7 @@ limitations under the License.
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { Room } from "matrix-js-sdk/src/models/room";
+import { EventType } from "matrix-js-sdk/src/@types/event";
 
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { useIsEncrypted } from "../../../hooks/useIsEncrypted";
@@ -295,6 +296,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose }) 
         });
     };
 
+    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
     const isRoomEncrypted = useIsEncrypted(cli, room);
     const roomContext = useContext(RoomContext);
     const e2eStatus = roomContext.e2eStatus;
@@ -370,9 +372,11 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose }) 
                 >
                     {_t("Share room")}
                 </Button>
-                <Button className="mx_RoomSummaryCard_icon_settings" onClick={onRoomSettingsClick}>
-                    {_t("Room settings")}
-                </Button>
+                {canModifyRoomSettings && (
+                    <Button className="mx_RoomSummaryCard_icon_settings" onClick={onRoomSettingsClick}>
+                        {_t("Room settings")}
+                    </Button>
+                )}
             </Group>
 
             {SettingsStore.getValue(UIFeature.Widgets) &&

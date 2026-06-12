@@ -16,6 +16,7 @@ limitations under the License.
 
 import React, { useContext } from "react";
 import { Room } from "matrix-js-sdk/src/models/room";
+import { EventType } from "matrix-js-sdk/src/@types/event";
 import { logger } from "matrix-js-sdk/src/logger";
 
 import { IProps as IContextMenuProps } from "../../structures/ContextMenu";
@@ -112,6 +113,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
     } */
 
     const isDm = DMRoomMap.shared().getUserIdForRoomId(room.roomId);
+    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
     const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");
     const elementCallVideoRoomsEnabled = useFeatureEnabled("feature_element_call_video_rooms");
     const isVideoRoom =
@@ -378,21 +380,23 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
                 {lowPriorityOption}
                 {copyLinkOption}
 
-                <IconizedContextMenuOption
-                    onClick={(ev: ButtonEvent) => {
-                        ev.preventDefault();
-                        ev.stopPropagation();
+                {canModifyRoomSettings && (
+                    <IconizedContextMenuOption
+                        onClick={(ev: ButtonEvent) => {
+                            ev.preventDefault();
+                            ev.stopPropagation();
 
-                        dis.dispatch({
-                            action: "open_room_settings",
-                            room_id: room.roomId,
-                        });
-                        onFinished();
-                        PosthogTrackers.trackInteraction("WebRoomHeaderContextMenuSettingsItem", ev);
-                    }}
-                    label={_t("Settings")}
-                    iconClassName="mx_RoomTile_iconSettings"
-                />
+                            dis.dispatch({
+                                action: "open_room_settings",
+                                room_id: room.roomId,
+                            });
+                            onFinished();
+                            PosthogTrackers.trackInteraction("WebRoomHeaderContextMenuSettingsItem", ev);
+                        }}
+                        label={_t("Settings")}
+                        iconClassName="mx_RoomTile_iconSettings"
+                    />
+                )}
 
                 {exportChatOption}
 

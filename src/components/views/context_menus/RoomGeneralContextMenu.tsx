@@ -16,6 +16,7 @@ limitations under the License.
 
 import { logger } from "matrix-js-sdk/src/logger";
 import { Room } from "matrix-js-sdk/src/models/room";
+import { EventType } from "matrix-js-sdk/src/@types/event";
 import React, { useContext } from "react";
 
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
@@ -201,7 +202,8 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
         );
     }
 
-    const settingsOption: JSX.Element = (
+    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
+    const settingsOption: JSX.Element | null = canModifyRoomSettings ? (
         <IconizedContextMenuOption
             onClick={wrapHandler(
                 () =>
@@ -214,7 +216,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
             label={_t("Settings")}
             iconClassName="mx_RoomGeneralContextMenu_iconSettings"
         />
-    );
+    ) : null;
 
     let leaveOption: JSX.Element | undefined;
     if (roomTags.includes(DefaultTagID.Archived)) {

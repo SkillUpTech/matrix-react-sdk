@@ -30,6 +30,8 @@ import PosthogTrackers from "../../../../../PosthogTrackers";
 import SettingsSubsection from "../../shared/SettingsSubsection";
 import SettingsTab from "../SettingsTab";
 import { SettingsSection } from "../../shared/SettingsSection";
+import { LMSRoleStore } from "../../../../../stores/LMSRoleStore";
+import { UPDATE_EVENT } from "../../../../../stores/AsyncStore";
 
 interface IProps {
     room: Room;
@@ -50,6 +52,18 @@ export default class GeneralRoomSettingsTab extends React.Component<IProps, ISta
             isRoomPublished: false, // loaded async
         };
     }
+
+    public componentDidMount(): void {
+        LMSRoleStore.instance.on(UPDATE_EVENT, this.onLMSRoleUpdate);
+    }
+
+    public componentWillUnmount(): void {
+        LMSRoleStore.instance.off(UPDATE_EVENT, this.onLMSRoleUpdate);
+    }
+
+    private onLMSRoleUpdate = (): void => {
+        this.forceUpdate();
+    };
 
     private onLeaveClick = (ev: ButtonEvent): void => {
         dis.dispatch({
@@ -83,20 +97,30 @@ export default class GeneralRoomSettingsTab extends React.Component<IProps, ISta
             );
         } */
 
+        const isStudent = LMSRoleStore.instance.isStudent();
+        const role = LMSRoleStore.instance.getRole();
+        console.log(
+            "[GeneralRoomSettingsTab] role =", role,
+            "| isStudent =", isStudent,
+            "| Room Addresses section:", isStudent ? "HIDDEN" : "VISIBLE",
+        );
+
         return (
             <SettingsTab data-testid="General">
                 <SettingsSection heading={_t("General")}>
                     <RoomProfileSettings roomId={room.roomId} />
                 </SettingsSection>
 
-                <SettingsSection heading={_t("Room Addresses")}>
-                    <AliasSettings
-                        roomId={room.roomId}
-                        canSetCanonicalAlias={canSetCanonical}
-                        canSetAliases={canSetAliases}
-                        canonicalAliasEvent={canonicalAliasEv}
-                    />
-                </SettingsSection>
+                {!isStudent && (
+                    <SettingsSection heading={_t("Room Addresses")}>
+                        <AliasSettings
+                            roomId={room.roomId}
+                            canSetCanonicalAlias={canSetCanonical}
+                            canSetAliases={canSetAliases}
+                            canonicalAliasEvent={canonicalAliasEv}
+                        />
+                    </SettingsSection>
+                )}
 
                 <SettingsSection heading={_t("Other")}>
                     {urlPreviewSettings}
