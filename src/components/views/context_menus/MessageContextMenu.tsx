@@ -56,6 +56,8 @@ import { getForwardableEvent } from "../../../events/forward/getForwardableEvent
 import { getShareableLocationEvent } from "../../../events/location/getShareableLocationEvent";
 import { ShowThreadPayload } from "../../../dispatcher/payloads/ShowThreadPayload";
 import { CardContext } from "../right_panel/context";
+import { LMSRoleStore } from "../../../stores/LMSRoleStore";
+import { showStudentRoleActionDisabledToast } from "../../../utils/roleRestrictions";
 
 interface IReplyInThreadButton {
     mxEvent: MatrixEvent;
@@ -244,6 +246,12 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
     };
 
     private onForwardClick = (forwardableEvent: MatrixEvent) => (): void => {
+        if (LMSRoleStore.instance.isStudent()) {
+            showStudentRoleActionDisabledToast();
+            this.closeMenu();
+            return;
+        }
+
         dis.dispatch<OpenForwardDialogPayload>({
             action: Action.OpenForwardDialog,
             event: forwardableEvent,
@@ -292,6 +300,13 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
 
     private onShareClick = (e: ButtonEvent): void => {
         e.preventDefault();
+
+        if (LMSRoleStore.instance.isStudent()) {
+            showStudentRoleActionDisabledToast();
+            this.closeMenu();
+            return;
+        }
+
         Modal.createDialog(ShareDialog, {
             target: this.props.mxEvent,
             permalinkCreator: this.props.permalinkCreator,
@@ -396,6 +411,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         const unsentReactionsCount = this.getUnsentReactions().length;
         const contentActionable = isContentActionable(mxEvent);
         const permalink = this.props.permalinkCreator?.forEvent(this.props.mxEvent.getId()!);
+        const isStudent = LMSRoleStore.instance.isStudent();
         // status is SENT before remote-echo, null after
         const isSent = !eventStatus || eventStatus === EventStatus.SENT;
         const { timelineRenderingType, canReact, canSendMessages } = this.context;
@@ -447,7 +463,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
 
         let forwardButton: JSX.Element | undefined;
         const forwardableEvent = getForwardableEvent(mxEvent, cli);
-        if (contentActionable && forwardableEvent) {
+        if (!isStudent && contentActionable && forwardableEvent) {
             forwardButton = (
                 <IconizedContextMenuOption
                     iconClassName="mx_MessageContextMenu_iconForward"
@@ -489,7 +505,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         let permalinkButton: JSX.Element | undefined;
-        if (permalink) {
+        if (!isStudent && permalink) {
             permalinkButton = (
                 <IconizedContextMenuOption
                     iconClassName="mx_MessageContextMenu_iconPermalink"

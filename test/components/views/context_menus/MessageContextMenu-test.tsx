@@ -44,6 +44,7 @@ import { Action } from "../../../../src/dispatcher/actions";
 import { mkVoiceBroadcastInfoStateEvent } from "../../../voice-broadcast/utils/test-utils";
 import { VoiceBroadcastInfoState } from "../../../../src/voice-broadcast";
 import { createMessageEventContent } from "../../../test-utils/events";
+import { LMSRoleStore } from "../../../../src/stores/LMSRoleStore";
 
 jest.mock("../../../../src/utils/strings", () => ({
     copyPlaintext: jest.fn(),
@@ -61,6 +62,7 @@ describe("MessageContextMenu", () => {
     beforeEach(() => {
         jest.resetAllMocks();
         stubClient();
+        jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(false);
     });
 
     it("does show copy link button when supplied a link", () => {
@@ -342,6 +344,64 @@ describe("MessageContextMenu", () => {
         });
     });
 
+    describe("student role restrictions", () => {
+        it("hides Forward and Share options for student accounts", () => {
+            jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(true);
+
+            createMenuWithContent(createMessageEventContent("hello"), {
+                permalinkCreator: {
+                    forEvent: jest.fn().mockReturnValue("https://example.com/permalink"),
+                } as any,
+            });
+
+            expect(document.querySelector('[aria-label="Forward"]')).toBeFalsy();
+            expect(document.querySelector('[aria-label="Share"]')).toBeFalsy();
+        });
+
+        it("keeps Quote, View source, and Remove for student accounts", () => {
+            jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(true);
+
+            const room = makeDefaultRoom();
+            jest.spyOn(room.currentState, "maySendRedactionForEvent").mockReturnValue(true);
+
+            const mxEvent = new MatrixEvent({
+                type: EventType.RoomMessage,
+                content: createMessageEventContent("hello"),
+            });
+
+            createMenu(
+                mxEvent,
+                {
+                    eventTileOps: {
+                        isWidgetHidden: jest.fn().mockReturnValue(false),
+                    } as any,
+                },
+                { canSendMessages: true },
+                new Map(),
+                room,
+            );
+
+            expect(document.querySelector('[aria-label="Quote"]')).toBeTruthy();
+            expect(document.querySelector('[aria-label="View source"]')).toBeTruthy();
+            expect(document.querySelector('[aria-label="Remove"]')).toBeTruthy();
+            expect(document.querySelector('[aria-label="Forward"]')).toBeFalsy();
+            expect(document.querySelector('[aria-label="Share"]')).toBeFalsy();
+        });
+
+        it("keeps Forward and Share options for non-student accounts", () => {
+            jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(false);
+
+            createMenuWithContent(createMessageEventContent("hello"), {
+                permalinkCreator: {
+                    forEvent: jest.fn().mockReturnValue("https://example.com/permalink"),
+                } as any,
+            });
+
+            expect(document.querySelector('[aria-label="Forward"]')).toBeTruthy();
+            expect(document.querySelector('[aria-label="Share"]')).toBeTruthy();
+        });
+    });
+
     describe("open as map link", () => {
         it("does not allow opening a plain message in open street maps", () => {
             const eventContent = createMessageEventContent("hello");
@@ -571,3 +631,4 @@ function createMenu(
         </RoomContext.Provider>,
     );
 }
+
