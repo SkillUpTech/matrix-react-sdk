@@ -26,6 +26,7 @@ const config: Config = {
     setupFilesAfterEnv: ["<rootDir>/test/setupTests.js"],
     moduleNameMapper: {
         "\\.(gif|png|ttf|woff2)$": "<rootDir>/__mocks__/imageMock.js",
+        "\\.(css|less|scss|sass|pcss)$": "<rootDir>/__mocks__/empty.js",
         "\\.svg$": "<rootDir>/__mocks__/svg.js",
         "\\$webapp/i18n/languages.json": "<rootDir>/__mocks__/languages.json",
         "decoderWorker\\.min\\.js": "<rootDir>/__mocks__/empty.js",

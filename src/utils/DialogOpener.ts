@@ -33,6 +33,8 @@ import { ButtonEvent } from "../components/views/elements/AccessibleButton";
 import PosthogTrackers from "../PosthogTrackers";
 import { showAddExistingSubspace, showCreateNewRoom } from "./space";
 import { SdkContextClass } from "../contexts/SDKContext";
+import { LMSRoleStore } from "../stores/LMSRoleStore";
+import { showStudentRoleActionDisabledToast } from "./roleRestrictions";
 
 /**
  * Auxiliary class to listen for dialog opening over the dispatcher and
@@ -72,6 +74,11 @@ export class DialogOpener {
                 );
                 break;
             case Action.OpenForwardDialog:
+                if (LMSRoleStore.instance.isStudent()) {
+                    showStudentRoleActionDisabledToast();
+                    break;
+                }
+
                 Modal.createDialog(ForwardDialog, {
                     matrixClient: this.matrixClient,
                     event: payload.event,
