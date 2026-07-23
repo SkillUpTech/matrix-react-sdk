@@ -1675,8 +1675,6 @@
     "Comment": "Comentário",
     "%(senderName)s ended the call": "%(senderName)s encerrou a chamada",
     "You ended the call": "Encerrou a chamada",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas atividades de aprendizagem.",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas turmas.",
     "Don't miss a reply": "Não perca uma resposta",
     "Enable desktop notifications": "Ativar notificações na ambiente de trabalho",
     "Welcome %(name)s": "Boas-vindas, %(name)s",
@@ -3830,5 +3828,7 @@
     "Don’t miss a thing by taking %(brand)s with you": "Não perca nada levando o %(brand)s consigo",
     "Don’t miss a reply or important message": "Não perca uma resposta ou mensagem importante",
     "Once everyone has joined, you’ll be able to chat": "Assim que todos tiverem entrado, poderá conversar",
-    "We need to know it’s you before resetting your password. Click the link in the email we just sent to <b>%(email)s</b>": "Precisamos de confirmar que és tu antes de repor a tua palavra-passe. Clica no link do e-mail que acabamos de enviar para <b>%(email)s</b>"
+    "We need to know it’s you before resetting your password. Click the link in the email we just sent to <b>%(email)s</b>": "Precisamos de confirmar que és tu antes de repor a tua palavra-passe. Clica no link do e-mail que acabamos de enviar para <b>%(email)s</b>",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your classes.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas turmas.",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas atividades de aprendizagem."
 }
