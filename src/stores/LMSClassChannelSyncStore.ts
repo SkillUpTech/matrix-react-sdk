@@ -360,6 +360,14 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         for (const leaveCandidate of leaves) {
             const leaveTarget = leaveCandidate.known.resolvedRoomId || leaveCandidate.known.roomRef;
 
+            if (leaveCandidate.changingTarget) {
+                const desiredRoomRef = desiredMap.get(leaveCandidate.classId);
+                const joinedAssignment = desiredRoomRef ? nextKnown.get(leaveCandidate.classId) : undefined;
+                if (!desiredRoomRef || !joinedAssignment || normalizeTarget(joinedAssignment.roomRef) !== normalizeTarget(desiredRoomRef)) {
+                    continue; // keep existing channel until the new one is successfully joined
+                }
+            }
+
             if (this.isStillNeededByAnotherClass(leaveCandidate.classId, leaveTarget, nextKnown)) {
                 if (!leaveCandidate.changingTarget) {
                     nextKnown.delete(leaveCandidate.classId);
@@ -463,6 +471,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
             logger.error(
                 `[LMSClassChannelSyncStore] Retry limit reached for ${task.operation} on class ${task.classId} (${task.target})`,
             );
+            this.clearRetry(task.key);
             return;
         }
 
