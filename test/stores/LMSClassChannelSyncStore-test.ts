@@ -22,6 +22,11 @@ import { stubClient } from "../test-utils";
 
 describe("LMSClassChannelSyncStore", () => {
     let client: MatrixClient;
+    let originalFetch: typeof global.fetch;
+
+    beforeAll(() => {
+        originalFetch = global.fetch;
+    });
 
     beforeEach(() => {
         jest.restoreAllMocks();
@@ -34,6 +39,7 @@ describe("LMSClassChannelSyncStore", () => {
     afterEach(() => {
         jest.restoreAllMocks();
         SdkConfig.reset();
+        global.fetch = originalFetch;
     });
 
     function makeStore(): LMSClassChannelSyncStore {

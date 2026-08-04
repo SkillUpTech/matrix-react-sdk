@@ -452,7 +452,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         await client.leave(target);
     }
 
-    private scheduleRetry(task: IRetryTask): void {
+    private scheduleRetry(task: IRetryTask, incrementAttempts = true): void {
         const syncCfg = SdkConfig.get("lms_class_channel_sync");
         const maxAttempts =
             typeof syncCfg?.retry_max_attempts === "number" && syncCfg.retry_max_attempts > 0
@@ -464,7 +464,8 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                 ? syncCfg.retry_base_delay_ms
                 : DEFAULT_RETRY_BASE_DELAY_MS;
 
-        const attempt = (this.retryAttempts.get(task.key) || 0) + 1;
+        const currentAttempts = this.retryAttempts.get(task.key) || 0;
+        const attempt = incrementAttempts ? currentAttempts + 1 : Math.max(currentAttempts, 1);
         this.retryAttempts.set(task.key, attempt);
 
         if (attempt > maxAttempts) {
@@ -500,7 +501,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                 // with applyAssignmentDiff() and losing updates.
                 if (this.syncInFlight) {
                     this.requestSync("retry_queued");
-                    this.scheduleRetry(pending);
+                    this.scheduleRetry(pending, false);
                     return;
                 }
 
