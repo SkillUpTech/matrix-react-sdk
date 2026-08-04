@@ -495,20 +495,36 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
             }
 
             try {
-                if (pending.operation === "join") {
-                    const roomId = await this.joinChannel(pending.target);
-                    this.knownAssignments.set(pending.classId, { roomRef: pending.target, resolvedRoomId: roomId || undefined });
-                } else {
-                    await this.leaveChannel(pending.target);
-                    if (!this.desiredAssignments.has(pending.classId)) {
-                        this.knownAssignments.delete(pending.classId);
-                    }
+                // Never mutate memberships or assignment state directly from retry callbacks.
+                // Retries must go through the same serialized sync path to avoid interleaving
+                // with applyAssignmentDiff() and losing updates.
+                if (this.syncInFlight) {
+                    this.requestSync("retry_queued");
+                    this.scheduleRetry(pending);
+                    return;
                 }
-                this.clearRetry(task.key);
-                this.requestSync("retry_success");
+
+                await this.syncClassAssignments("retry_execute");
+
+                // If the sync already scheduled another retry for this key, do not duplicate timers.
+                if (this.retryTimeouts.has(task.key)) {
+                    return;
+                }
+
+                // Successful syncs clear retry keys during applyAssignmentDiff via clearRetry().
+                if (!this.retryTasks.has(task.key)) {
+                    return;
+                }
+
+                if (this.shouldSkipRetryTask(pending)) {
+                    this.clearRetry(task.key);
+                    return;
+                }
+
+                this.scheduleRetry(pending);
             } catch (error) {
                 logger.warn(
-                    `[LMSClassChannelSyncStore] Retry ${attempt} failed for ${pending.operation} on class ${pending.classId}`,
+                    `[LMSClassChannelSyncStore] Retry ${attempt} failed while triggering sync for ${pending.operation} on class ${pending.classId}`,
                     error,
                 );
                 this.scheduleRetry(pending);
