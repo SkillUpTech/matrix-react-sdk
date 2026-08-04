@@ -210,6 +210,7 @@ export interface IConfigOptions {
     >;
 
     // Base URL of the LMS platform used to fetch user role via /oauth2/getuserinfo/<username>
+    // and as the default base for class-channel sync when classes_endpoint is unset.
     lms_base_url?: string;
 
     // Optional class-to-channel sync configuration for LMS-integrated deployments.

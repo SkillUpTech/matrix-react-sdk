@@ -41,6 +41,7 @@ interface IRetryTask {
     operation: "join" | "leave";
     classId: string;
     target: string;
+    roomRef?: string;
 }
 
 const DEFAULT_POLL_INTERVAL_MS = 10_000;
@@ -358,7 +359,9 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         }
 
         for (const leaveCandidate of leaves) {
-            const leaveTarget = leaveCandidate.known.resolvedRoomId || leaveCandidate.known.roomRef;
+            const leaveRoomRef = leaveCandidate.known.roomRef;
+            const leaveResolvedTarget = leaveCandidate.known.resolvedRoomId;
+            const leaveTarget = leaveResolvedTarget || leaveRoomRef;
 
             if (leaveCandidate.changingTarget) {
                 const desiredRoomRef = desiredMap.get(leaveCandidate.classId);
@@ -368,7 +371,13 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                 }
             }
 
-            if (this.isStillNeededByAnotherClass(leaveCandidate.classId, leaveTarget, nextKnown)) {
+            if (
+                this.isStillNeededByAnotherClass(
+                    leaveCandidate.classId,
+                    { target: leaveTarget, roomRef: leaveRoomRef },
+                    nextKnown,
+                )
+            ) {
                 if (!leaveCandidate.changingTarget) {
                     nextKnown.delete(leaveCandidate.classId);
                 }
@@ -398,6 +407,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                     operation: "leave",
                     classId: leaveCandidate.classId,
                     target: leaveTarget,
+                    roomRef: leaveRoomRef,
                 });
             }
         }
@@ -408,20 +418,27 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         }
     }
 
-    private isStillNeededByAnotherClass(classId: string, target: string, knownAssignments: Map<string, IKnownAssignment>): boolean {
-        const normalizedTarget = normalizeTarget(target);
+    private isStillNeededByAnotherClass(
+        classId: string,
+        roomTargets: { target: string; roomRef?: string },
+        knownAssignments: Map<string, IKnownAssignment>,
+    ): boolean {
+        const matchingTargets = new Set([normalizeTarget(roomTargets.target)]);
+        if (roomTargets.roomRef) {
+            matchingTargets.add(normalizeTarget(roomTargets.roomRef));
+        }
 
         for (const [otherClassId, desiredTarget] of this.desiredAssignments) {
             if (otherClassId === classId) continue;
-            if (normalizeTarget(desiredTarget) === normalizedTarget) {
+            if (matchingTargets.has(normalizeTarget(desiredTarget))) {
                 return true;
             }
         }
 
         for (const [otherClassId, known] of knownAssignments) {
             if (otherClassId === classId) continue;
-            if (normalizeTarget(known.roomRef) === normalizedTarget) return true;
-            if (known.resolvedRoomId && normalizeTarget(known.resolvedRoomId) === normalizedTarget) return true;
+            if (matchingTargets.has(normalizeTarget(known.roomRef))) return true;
+            if (known.resolvedRoomId && matchingTargets.has(normalizeTarget(known.resolvedRoomId))) return true;
         }
 
         return false;
@@ -541,17 +558,26 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
 
     private shouldSkipRetryTask(task: IRetryTask): boolean {
         const desiredTarget = this.desiredAssignments.get(task.classId);
+        const normalizedTaskTarget = normalizeTarget(task.target);
+        const normalizedTaskRoomRef = task.roomRef ? normalizeTarget(task.roomRef) : null;
 
         if (task.operation === "join") {
             if (!desiredTarget) return true;
-            return normalizeTarget(desiredTarget) !== normalizeTarget(task.target);
+            return normalizeTarget(desiredTarget) !== normalizedTaskTarget;
         }
 
-        if (desiredTarget && normalizeTarget(desiredTarget) === normalizeTarget(task.target)) {
+        if (desiredTarget) {
+            const normalizedDesiredTarget = normalizeTarget(desiredTarget);
+            if (normalizedDesiredTarget === normalizedTaskTarget || normalizedDesiredTarget === normalizedTaskRoomRef) {
+                return true;
+            }
+        }
+
+        if (this.isStillNeededByAnotherClass(task.classId, { target: task.target, roomRef: task.roomRef }, this.knownAssignments)) {
             return true;
         }
 
-        return this.isStillNeededByAnotherClass(task.classId, task.target, this.knownAssignments);
+        return false;
     }
 
     private clearRetry(key: string): void {

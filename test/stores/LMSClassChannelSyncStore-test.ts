@@ -156,6 +156,31 @@ describe("LMSClassChannelSyncStore", () => {
         expect(store.knownAssignments.has("CLASS-B")).toBe(true);
     });
 
+    it("does not leave resolved room when another class still desires the same alias and join has not succeeded yet", async () => {
+        SdkConfig.add({
+            lms_base_url: "https://lms.example.org",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore() as any;
+        store.knownAssignments.set("CLASS-A", {
+            roomRef: "#shared:example.org",
+            resolvedRoomId: "!shared:example.org",
+        });
+        store.desiredAssignments = new Map([["CLASS-B", "#shared:example.org"]]);
+
+        const leaveSpy = jest.spyOn(client as any, "leave").mockResolvedValue(undefined);
+        jest.spyOn(store, "joinChannel" as any).mockRejectedValue(new Error("join failed"));
+
+        await store.applyAssignmentDiff([{ classId: "CLASS-B", roomRef: "#shared:example.org" }]);
+
+        expect(leaveSpy).not.toHaveBeenCalled();
+        expect(store.knownAssignments.has("CLASS-A")).toBe(false);
+        expect(store.retryTasks.has("join|CLASS-B|#shared:example.org")).toBe(true);
+    });
+
     it("throws when trying to join without a Matrix client", async () => {
         const store = makeStore() as any;
         store.readyStore.mxClient = null;
@@ -276,5 +301,20 @@ describe("LMSClassChannelSyncStore", () => {
         expect(store.retryTimeouts.has(task.key)).toBe(false);
 
         jest.useRealTimers();
+    });
+
+    it("skips leave retry when alias roomRef becomes desired again", () => {
+        const store = makeStore() as any;
+        store.desiredAssignments = new Map([["CLASS-B", "#shared:example.org"]]);
+
+        const shouldSkip = store.shouldSkipRetryTask({
+            key: "leave|CLASS-A|!shared:example.org",
+            operation: "leave",
+            classId: "CLASS-A",
+            target: "!shared:example.org",
+            roomRef: "#shared:example.org",
+        });
+
+        expect(shouldSkip).toBe(true);
     });
 });
