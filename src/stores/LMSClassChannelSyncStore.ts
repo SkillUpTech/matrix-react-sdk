@@ -427,9 +427,11 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         return false;
     }
 
-    private async joinChannel(target: string): Promise<string | null> {
+    private async joinChannel(target: string): Promise<string> {
         const client = this.matrixClient;
-        if (!client) return null;
+        if (!client) {
+            throw new Error("Matrix client is not available for join operation");
+        }
 
         const room = client.getRoom(target);
         if (room?.getMyMembership() === "join") {
@@ -437,12 +439,14 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         }
 
         const joinedRoom = await client.joinRoom(target);
-        return joinedRoom.roomId || null;
+        return joinedRoom.roomId;
     }
 
     private async leaveChannel(target: string): Promise<void> {
         const client = this.matrixClient;
-        if (!client) return;
+        if (!client) {
+            throw new Error("Matrix client is not available for leave operation");
+        }
 
         const room = client.getRoom(target);
         if (room && room.getMyMembership() !== "join") {

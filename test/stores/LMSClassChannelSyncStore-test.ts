@@ -155,4 +155,126 @@ describe("LMSClassChannelSyncStore", () => {
         expect(store.knownAssignments.has("CLASS-A")).toBe(false);
         expect(store.knownAssignments.has("CLASS-B")).toBe(true);
     });
+
+    it("throws when trying to join without a Matrix client", async () => {
+        const store = makeStore() as any;
+        store.readyStore.mxClient = null;
+
+        await expect(store.joinChannel("!room:example.org")).rejects.toThrow(
+            "Matrix client is not available for join operation",
+        );
+    });
+
+    it("throws when trying to leave without a Matrix client", async () => {
+        const store = makeStore() as any;
+        store.readyStore.mxClient = null;
+
+        await expect(store.leaveChannel("!room:example.org")).rejects.toThrow(
+            "Matrix client is not available for leave operation",
+        );
+    });
+
+    it("scheduleRetry uses exponential delay and clears when max attempts are exceeded", () => {
+        jest.useFakeTimers();
+
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                retry_base_delay_ms: 100,
+                retry_max_attempts: 2,
+            },
+        });
+
+        const store = makeStore() as any;
+        const task = {
+            key: "join|CLS|#room:example.org",
+            operation: "join",
+            classId: "CLS",
+            target: "#room:example.org",
+        };
+
+        store.scheduleRetry(task);
+        expect(store.retryAttempts.get(task.key)).toBe(1);
+
+        const timeoutA = store.retryTimeouts.get(task.key);
+        store.scheduleRetry(task);
+        expect(store.retryAttempts.get(task.key)).toBe(2);
+        const timeoutB = store.retryTimeouts.get(task.key);
+        expect(timeoutB).toBeDefined();
+        expect(timeoutB).not.toBe(timeoutA);
+
+        store.scheduleRetry(task);
+        expect(store.retryAttempts.has(task.key)).toBe(false);
+        expect(store.retryTasks.has(task.key)).toBe(false);
+        expect(store.retryTimeouts.has(task.key)).toBe(false);
+
+        jest.useRealTimers();
+    });
+
+    it("does not increment attempts when retry is re-queued during in-flight sync", async () => {
+        jest.useFakeTimers();
+
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                retry_base_delay_ms: 10,
+                retry_max_attempts: 5,
+            },
+        });
+
+        const store = makeStore() as any;
+        const task = {
+            key: "join|CLS2|#room2:example.org",
+            operation: "join",
+            classId: "CLS2",
+            target: "#room2:example.org",
+        };
+
+        store.syncInFlight = true;
+        store.desiredAssignments = new Map([["CLS2", "#room2:example.org"]]);
+        store.shouldSkipRetryTask = jest.fn().mockReturnValue(false);
+        store.requestSync = jest.fn();
+
+        store.scheduleRetry(task);
+        expect(store.retryAttempts.get(task.key)).toBe(1);
+
+        jest.advanceTimersByTime(10);
+        await Promise.resolve();
+
+        expect(store.requestSync).toHaveBeenCalledWith("retry_queued");
+        expect(store.retryAttempts.get(task.key)).toBe(1);
+
+        jest.useRealTimers();
+    });
+
+    it("clears stale join retry when desired assignment changes", async () => {
+        jest.useFakeTimers();
+
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                retry_base_delay_ms: 10,
+                retry_max_attempts: 5,
+            },
+        });
+
+        const store = makeStore() as any;
+        const task = {
+            key: "join|CLS3|#old:example.org",
+            operation: "join",
+            classId: "CLS3",
+            target: "#old:example.org",
+        };
+
+        store.desiredAssignments = new Map([["CLS3", "#new:example.org"]]);
+
+        store.scheduleRetry(task);
+        expect(store.retryTasks.has(task.key)).toBe(true);
+
+        jest.advanceTimersByTime(10);
+        await Promise.resolve();
+
+        expect(store.retryTasks.has(task.key)).toBe(false);
+        expect(store.retryAttempts.has(task.key)).toBe(false);
+        expect(store.retryTimeouts.has(task.key)).toBe(false);
+
+        jest.useRealTimers();
+    });
 });
