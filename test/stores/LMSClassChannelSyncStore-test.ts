@@ -1,0 +1,152 @@
+/*
+Copyright 2026 DGE
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import { MatrixClient } from "matrix-js-sdk/src/client";
+
+import SdkConfig from "../../src/SdkConfig";
+import { LMSClassChannelSyncStore } from "../../src/stores/LMSClassChannelSyncStore";
+import { stubClient } from "../test-utils";
+
+describe("LMSClassChannelSyncStore", () => {
+    let client: MatrixClient;
+
+    beforeEach(() => {
+        jest.restoreAllMocks();
+        SdkConfig.reset();
+        client = stubClient();
+        global.fetch = jest.fn() as unknown as typeof fetch;
+        (client as any).leave = jest.fn().mockResolvedValue(undefined);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+        SdkConfig.reset();
+    });
+
+    function makeStore(): LMSClassChannelSyncStore {
+        // @ts-ignore bypass private ctor for tests
+        const store = new LMSClassChannelSyncStore() as LMSClassChannelSyncStore;
+        // Inject test client into AsyncStoreWithClient dependency chain
+        (store as any).readyStore = {
+            mxClient: client,
+        };
+        return store;
+    }
+
+    it("fetches classes using default LMS endpoint and parses assignment variants", async () => {
+        jest.spyOn(client, "getUserId").mockReturnValue("@student.01:chat.example.org");
+
+        SdkConfig.add({
+            lms_base_url: "https://lms.example.org/",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        (global.fetch as jest.Mock).mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                classes: [
+                    { id: "CLS-1", room_id: "!room1:example.org" },
+                    { class_id: "CLS-2", room_alias: "#class-2:example.org" },
+                    { course_id: "CLS-3", channel: { room_alias: "#class-3:example.org" } },
+                    { classCode: "CLS-4", room: { room_id: "!room4:example.org" } },
+                    { code: "CLS-5", communication_channel: { channel_alias: "#class-5:example.org" } },
+                    { id: "CLS-BAD" },
+                ],
+            }),
+        });
+
+        const store = makeStore();
+        const assignments = await (store as any).fetchDesiredAssignments();
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            "https://lms.example.org/oauth2/getuserclasses/student.01",
+            expect.objectContaining({ method: "GET" }),
+        );
+        expect(assignments).toEqual([
+            { classId: "CLS-1", roomRef: "!room1:example.org" },
+            { classId: "CLS-2", roomRef: "#class-2:example.org" },
+            { classId: "CLS-3", roomRef: "#class-3:example.org" },
+            { classId: "CLS-4", roomRef: "!room4:example.org" },
+            { classId: "CLS-5", roomRef: "#class-5:example.org" },
+        ]);
+    });
+
+    it("supports configurable classes_path for nested payloads", async () => {
+        SdkConfig.add({
+            lms_base_url: "https://lms.example.org",
+            lms_class_channel_sync: {
+                enabled: true,
+                classes_path: "data.current_classes",
+            },
+        });
+
+        (global.fetch as jest.Mock).mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                data: {
+                    current_classes: [{ slug: "CLS-NESTED", matrix_room_alias: "#nested:example.org" }],
+                },
+            }),
+        });
+
+        const store = makeStore();
+        const assignments = await (store as any).fetchDesiredAssignments();
+
+        expect(assignments).toEqual([{ classId: "CLS-NESTED", roomRef: "#nested:example.org" }]);
+    });
+
+    it("returns no assignments when LMS base URL is missing", async () => {
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore();
+        const assignments = await (store as any).fetchDesiredAssignments();
+
+        expect(assignments).toEqual([]);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it("does not leave a channel still required by another class", async () => {
+        SdkConfig.add({
+            lms_base_url: "https://lms.example.org",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore() as any;
+        store.knownAssignments.set("CLASS-A", { roomRef: "#shared:example.org" });
+        store.knownAssignments.set("CLASS-B", { roomRef: "#shared:example.org" });
+        store.desiredAssignments = new Map([["CLASS-B", "#shared:example.org"]]);
+
+        const leaveSpy = jest.spyOn(client as any, "leave").mockResolvedValue(undefined);
+        const joinSpy = jest.spyOn(client, "joinRoom").mockResolvedValue({ roomId: "!shared:example.org" } as any);
+
+        await store.applyAssignmentDiff([{ classId: "CLASS-B", roomRef: "#shared:example.org" }]);
+
+        expect(leaveSpy).not.toHaveBeenCalled();
+        expect(joinSpy).not.toHaveBeenCalled();
+        expect(store.knownAssignments.has("CLASS-A")).toBe(false);
+        expect(store.knownAssignments.has("CLASS-B")).toBe(true);
+    });
+});
