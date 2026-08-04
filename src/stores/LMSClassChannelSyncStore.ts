@@ -49,7 +49,7 @@ const DEFAULT_RETRY_BASE_DELAY_MS = 2_000;
 const DEFAULT_RETRY_MAX_ATTEMPTS = 8;
 
 function normalizeTarget(target: string): string {
-    return target.trim().toLowerCase();
+    return target.trim();
 }
 
 function extractUsernameFromMxid(userId: string): string {
