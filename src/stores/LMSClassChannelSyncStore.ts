@@ -19,6 +19,7 @@ import { logger } from "matrix-js-sdk/src/logger";
 import { ActionPayload } from "../dispatcher/payloads";
 import { AsyncStoreWithClient } from "./AsyncStoreWithClient";
 import defaultDispatcher from "../dispatcher/dispatcher";
+import { extractLocalpartFromMxid } from "../MxidUtils";
 import SdkConfig from "../SdkConfig";
 
 interface IState {
@@ -51,11 +52,6 @@ const DEFAULT_RETRY_MAX_ATTEMPTS = 8;
 
 function normalizeTarget(target: string): string {
     return target.trim();
-}
-
-function extractUsernameFromMxid(userId: string): string {
-    const colonIdx = userId.indexOf(":");
-    return userId.slice(1, colonIdx > 0 ? colonIdx : undefined);
 }
 
 function getValueAtPath(input: unknown, path: string): unknown {
@@ -257,7 +253,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                 return [];
             }
 
-            const username = extractUsernameFromMxid(userId);
+            const username = extractLocalpartFromMxid(userId);
             const base = lmsBaseUrl.replace(/\/$/, "");
             endpoint = `${base}/oauth2/getuserclasses/${encodeURIComponent(username)}`;
         }
@@ -480,6 +476,11 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
     }
 
     private scheduleRetry(task: IRetryTask, incrementAttempts = true): void {
+        if (!this.matrixClient) {
+            this.clearRetry(task.key);
+            return;
+        }
+
         const syncCfg = SdkConfig.get("lms_class_channel_sync");
         const maxAttempts =
             typeof syncCfg?.retry_max_attempts === "number" && syncCfg.retry_max_attempts > 0
@@ -516,6 +517,11 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
 
             const pending = this.retryTasks.get(task.key);
             if (!pending) return;
+
+            if (!this.matrixClient) {
+                this.clearRetry(task.key);
+                return;
+            }
 
             if (this.shouldSkipRetryTask(pending)) {
                 this.clearRetry(task.key);

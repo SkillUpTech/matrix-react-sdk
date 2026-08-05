@@ -261,6 +261,28 @@ describe("LMSClassChannelSyncStore", () => {
         jest.useRealTimers();
     });
 
+    it("does not schedule retry timers when Matrix client is unavailable", () => {
+        jest.useFakeTimers();
+
+        const store = makeStore() as any;
+        store.readyStore.mxClient = null;
+
+        const task = {
+            key: "leave|CLS-NOCLIENT|!room:example.org",
+            operation: "leave",
+            classId: "CLS-NOCLIENT",
+            target: "!room:example.org",
+        };
+
+        store.scheduleRetry(task);
+
+        expect(store.retryAttempts.has(task.key)).toBe(false);
+        expect(store.retryTasks.has(task.key)).toBe(false);
+        expect(store.retryTimeouts.has(task.key)).toBe(false);
+
+        jest.useRealTimers();
+    });
+
     it("does not increment attempts when retry is re-queued during in-flight sync", async () => {
         jest.useFakeTimers();
 

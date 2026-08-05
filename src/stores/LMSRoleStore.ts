@@ -19,6 +19,7 @@ import { logger } from "matrix-js-sdk/src/logger";
 import { ActionPayload } from "../dispatcher/payloads";
 import { AsyncStoreWithClient } from "./AsyncStoreWithClient";
 import defaultDispatcher from "../dispatcher/dispatcher";
+import { extractLocalpartFromMxid } from "../MxidUtils";
 import SdkConfig from "../SdkConfig";
 
 export type LMSRole = string;
@@ -98,9 +99,7 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
         const userId = client.getUserId();
         if (!userId) return;
 
-        // Matrix user ID format: @username:server.com → extract "username"
-        const colonIdx = userId.indexOf(":");
-        const username = userId.slice(1, colonIdx > 0 ? colonIdx : undefined);
+        const username = extractLocalpartFromMxid(userId);
 
         const base = lmsBaseUrl.replace(/\/$/, "");
         const url = `${base}/oauth2/getuserinfo/${encodeURIComponent(username)}`;
