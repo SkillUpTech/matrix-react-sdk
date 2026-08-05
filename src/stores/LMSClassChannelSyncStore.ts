@@ -145,6 +145,8 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         this.clearAllRetries();
         this.knownAssignments.clear();
         this.desiredAssignments = new Map();
+        this.syncInFlight = false;
+        this.syncQueued = false;
 
         const syncCfg = SdkConfig.get("lms_class_channel_sync");
         if (!syncCfg?.enabled) {
@@ -183,6 +185,8 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         this.clearAllRetries();
         this.knownAssignments.clear();
         this.desiredAssignments = new Map();
+        this.syncInFlight = false;
+        this.syncQueued = false;
         await this.updateState({ active: false, lastSyncTs: null });
     }
 

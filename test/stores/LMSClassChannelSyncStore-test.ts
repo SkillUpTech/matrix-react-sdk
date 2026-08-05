@@ -234,6 +234,39 @@ describe("LMSClassChannelSyncStore", () => {
         expect(store.pollHandle).toBeUndefined();
     });
 
+    it("resets stale sync flags on ready transition", async () => {
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                enabled: true,
+                classes_endpoint: "https://sync.example.org/classes/me",
+            },
+        });
+
+        const store = makeStore() as any;
+        store.syncInFlight = true;
+        store.syncQueued = true;
+
+        const requestSyncSpy = jest.spyOn(store, "requestSync").mockImplementation(() => undefined);
+
+        await store.onReady();
+
+        expect(store.syncInFlight).toBe(false);
+        expect(store.syncQueued).toBe(false);
+        expect(requestSyncSpy).toHaveBeenCalledWith("initial");
+    });
+
+    it("resets stale sync flags on not-ready transition", async () => {
+        const store = makeStore() as any;
+        store.syncInFlight = true;
+        store.syncQueued = true;
+
+        await store.onNotReady();
+
+        expect(store.syncInFlight).toBe(false);
+        expect(store.syncQueued).toBe(false);
+        expect(store.state.active).toBe(false);
+    });
+
     it("does not leave a channel still required by another class", async () => {
         SdkConfig.add({
             lms_base_url: "https://lms.example.org",
