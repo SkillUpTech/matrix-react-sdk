@@ -132,6 +132,46 @@ describe("LMSClassChannelSyncStore", () => {
         expect(global.fetch).not.toHaveBeenCalled();
     });
 
+    it("returns no assignments when LMS base URL is whitespace and classes_endpoint is unset", async () => {
+        SdkConfig.add({
+            lms_base_url: "   ",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore();
+        const assignments = await (store as any).fetchDesiredAssignments();
+
+        expect(assignments).toEqual([]);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it("trims LMS base URL before building the default classes endpoint", async () => {
+        jest.spyOn(client, "getUserIdLocalpart").mockReturnValue("student.01");
+
+        SdkConfig.add({
+            lms_base_url: "  https://lms.example.org/  ",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        (global.fetch as jest.Mock).mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({ classes: [] }),
+        });
+
+        const store = makeStore();
+        await (store as any).fetchDesiredAssignments();
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            "https://lms.example.org/oauth2/getuserclasses/student.01",
+            expect.objectContaining({ method: "GET" }),
+        );
+    });
+
     it("uses classes_endpoint without requiring LMS base URL", async () => {
         SdkConfig.add({
             lms_class_channel_sync: {
@@ -172,6 +212,24 @@ describe("LMSClassChannelSyncStore", () => {
 
         expect(store.state.active).toBe(false);
         expect(store.state.lastSyncTs).toBeNull();
+        expect(requestSyncSpy).not.toHaveBeenCalled();
+        expect(store.pollHandle).toBeUndefined();
+    });
+
+    it("stays inactive when sync is enabled and lms_base_url is whitespace with no classes_endpoint", async () => {
+        SdkConfig.add({
+            lms_base_url: "   ",
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore() as any;
+        const requestSyncSpy = jest.spyOn(store, "requestSync");
+
+        await store.onReady();
+
+        expect(store.state.active).toBe(false);
         expect(requestSyncSpy).not.toHaveBeenCalled();
         expect(store.pollHandle).toBeUndefined();
     });

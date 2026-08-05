@@ -153,7 +153,8 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         }
 
         const hasConfiguredEndpoint = !!syncCfg.classes_endpoint?.trim();
-        const hasLmsBaseUrl = !!SdkConfig.get("lms_base_url");
+        const lmsBaseUrl = SdkConfig.get("lms_base_url")?.trim();
+        const hasLmsBaseUrl = !!lmsBaseUrl;
         if (!hasConfiguredEndpoint && !hasLmsBaseUrl) {
             logger.warn(
                 "[LMSClassChannelSyncStore] lms_class_channel_sync is enabled but neither classes_endpoint nor lms_base_url is configured; sync remains inactive",
@@ -247,7 +248,7 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         if (!client) return [];
 
         const syncCfg = SdkConfig.get("lms_class_channel_sync");
-        const lmsBaseUrl = SdkConfig.get("lms_base_url");
+        const lmsBaseUrl = SdkConfig.get("lms_base_url")?.trim();
         const configuredEndpoint = syncCfg?.classes_endpoint?.trim();
 
         let endpoint: string;
