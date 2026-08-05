@@ -19,7 +19,6 @@ import { logger } from "matrix-js-sdk/src/logger";
 import { ActionPayload } from "../dispatcher/payloads";
 import { AsyncStoreWithClient } from "./AsyncStoreWithClient";
 import defaultDispatcher from "../dispatcher/dispatcher";
-import { extractLocalpartFromMxid } from "../MxidUtils";
 import SdkConfig from "../SdkConfig";
 
 interface IState {
@@ -153,6 +152,16 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
             return;
         }
 
+        const hasConfiguredEndpoint = !!syncCfg.classes_endpoint?.trim();
+        const hasLmsBaseUrl = !!SdkConfig.get("lms_base_url");
+        if (!hasConfiguredEndpoint && !hasLmsBaseUrl) {
+            logger.warn(
+                "[LMSClassChannelSyncStore] lms_class_channel_sync is enabled but neither classes_endpoint nor lms_base_url is configured; sync remains inactive",
+            );
+            await this.updateState({ active: false, lastSyncTs: null });
+            return;
+        }
+
         await this.updateState({ active: true, lastSyncTs: null });
         this.requestSync("initial");
 
@@ -241,9 +250,6 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
         const lmsBaseUrl = SdkConfig.get("lms_base_url");
         const configuredEndpoint = syncCfg?.classes_endpoint?.trim();
 
-        const userId = client.getUserId();
-        if (!userId) return [];
-
         let endpoint: string;
         if (configuredEndpoint) {
             endpoint = configuredEndpoint;
@@ -253,7 +259,11 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
                 return [];
             }
 
-            const username = extractLocalpartFromMxid(userId);
+            const username = client.getUserIdLocalpart();
+            if (!username) {
+                return [];
+            }
+
             const base = lmsBaseUrl.replace(/\/$/, "");
             endpoint = `${base}/oauth2/getuserclasses/${encodeURIComponent(username)}`;
         }

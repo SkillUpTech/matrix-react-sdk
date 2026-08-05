@@ -53,7 +53,7 @@ describe("LMSClassChannelSyncStore", () => {
     }
 
     it("fetches classes using default LMS endpoint and parses assignment variants", async () => {
-        jest.spyOn(client, "getUserId").mockReturnValue("@student.01:chat.example.org");
+        jest.spyOn(client, "getUserIdLocalpart").mockReturnValue("student.01");
 
         SdkConfig.add({
             lms_base_url: "https://lms.example.org/",
@@ -156,6 +156,24 @@ describe("LMSClassChannelSyncStore", () => {
             expect.objectContaining({ method: "GET" }),
         );
         expect(assignments).toEqual([{ classId: "CLS-OVERRIDE", roomRef: "#override:example.org" }]);
+    });
+
+    it("stays inactive when sync is enabled but neither classes_endpoint nor lms_base_url is configured", async () => {
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                enabled: true,
+            },
+        });
+
+        const store = makeStore() as any;
+        const requestSyncSpy = jest.spyOn(store, "requestSync");
+
+        await store.onReady();
+
+        expect(store.state.active).toBe(false);
+        expect(store.state.lastSyncTs).toBeNull();
+        expect(requestSyncSpy).not.toHaveBeenCalled();
+        expect(store.pollHandle).toBeUndefined();
     });
 
     it("does not leave a channel still required by another class", async () => {

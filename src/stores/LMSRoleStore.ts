@@ -19,7 +19,6 @@ import { logger } from "matrix-js-sdk/src/logger";
 import { ActionPayload } from "../dispatcher/payloads";
 import { AsyncStoreWithClient } from "./AsyncStoreWithClient";
 import defaultDispatcher from "../dispatcher/dispatcher";
-import { extractLocalpartFromMxid } from "../MxidUtils";
 import SdkConfig from "../SdkConfig";
 
 export type LMSRole = string;
@@ -96,16 +95,16 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
             return;
         }
 
-        const userId = client.getUserId();
-        if (!userId) return;
+        const username = client.getUserIdLocalpart();
+        if (!username) return;
 
-        const username = extractLocalpartFromMxid(userId);
+        const userId = client.getUserId();
 
         const base = lmsBaseUrl.replace(/\/$/, "");
         const url = `${base}/oauth2/getuserinfo/${encodeURIComponent(username)}`;
 
         console.group("[LMSRoleStore] Fetching user role");
-        console.log("Matrix userId:", userId);
+        console.log("Matrix userId:", userId ?? `@${username}`);
         console.log("LMS username:", username);
         console.log("Request URL:", url);
 
