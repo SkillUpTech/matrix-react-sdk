@@ -243,18 +243,24 @@ export class LMSClassChannelSyncStore extends AsyncStoreWithClient<IState> {
 
         const syncCfg = SdkConfig.get("lms_class_channel_sync");
         const lmsBaseUrl = SdkConfig.get("lms_base_url");
+        const configuredEndpoint = syncCfg?.classes_endpoint?.trim();
 
         const userId = client.getUserId();
         if (!userId) return [];
 
-        if (!lmsBaseUrl) {
-            logger.warn("[LMSClassChannelSyncStore] lms_base_url is not configured; class-channel sync skipped");
-            return [];
-        }
+        let endpoint: string;
+        if (configuredEndpoint) {
+            endpoint = configuredEndpoint;
+        } else {
+            if (!lmsBaseUrl) {
+                logger.warn("[LMSClassChannelSyncStore] lms_base_url is not configured and classes_endpoint is unset; class-channel sync skipped");
+                return [];
+            }
 
-        const username = extractUsernameFromMxid(userId);
-        const base = lmsBaseUrl.replace(/\/$/, "");
-        const endpoint = syncCfg?.classes_endpoint?.trim() || `${base}/oauth2/getuserclasses/${encodeURIComponent(username)}`;
+            const username = extractUsernameFromMxid(userId);
+            const base = lmsBaseUrl.replace(/\/$/, "");
+            endpoint = `${base}/oauth2/getuserclasses/${encodeURIComponent(username)}`;
+        }
 
         const timeoutMs =
             typeof syncCfg?.request_timeout_ms === "number" && syncCfg.request_timeout_ms > 0

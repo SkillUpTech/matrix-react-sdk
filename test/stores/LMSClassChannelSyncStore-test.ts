@@ -118,7 +118,7 @@ describe("LMSClassChannelSyncStore", () => {
         expect(assignments).toEqual([{ classId: "CLS-NESTED", roomRef: "#nested:example.org" }]);
     });
 
-    it("returns no assignments when LMS base URL is missing", async () => {
+    it("returns no assignments when LMS base URL is missing and classes_endpoint is unset", async () => {
         SdkConfig.add({
             lms_class_channel_sync: {
                 enabled: true,
@@ -130,6 +130,32 @@ describe("LMSClassChannelSyncStore", () => {
 
         expect(assignments).toEqual([]);
         expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it("uses classes_endpoint without requiring LMS base URL", async () => {
+        SdkConfig.add({
+            lms_class_channel_sync: {
+                enabled: true,
+                classes_endpoint: "https://sync.example.org/classes/me",
+            },
+        });
+
+        (global.fetch as jest.Mock).mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                classes: [{ id: "CLS-OVERRIDE", room_alias: "#override:example.org" }],
+            }),
+        });
+
+        const store = makeStore();
+        const assignments = await (store as any).fetchDesiredAssignments();
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            "https://sync.example.org/classes/me",
+            expect.objectContaining({ method: "GET" }),
+        );
+        expect(assignments).toEqual([{ classId: "CLS-OVERRIDE", roomRef: "#override:example.org" }]);
     });
 
     it("does not leave a channel still required by another class", async () => {
