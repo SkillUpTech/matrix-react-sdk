@@ -95,18 +95,16 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
             return;
         }
 
-        const userId = client.getUserId();
-        if (!userId) return;
+        const username = client.getUserIdLocalpart();
+        if (!username) return;
 
-        // Matrix user ID format: @username:server.com → extract "username"
-        const colonIdx = userId.indexOf(":");
-        const username = userId.slice(1, colonIdx > 0 ? colonIdx : undefined);
+        const userId = client.getUserId();
 
         const base = lmsBaseUrl.replace(/\/$/, "");
         const url = `${base}/oauth2/getuserinfo/${encodeURIComponent(username)}`;
 
         console.group("[LMSRoleStore] Fetching user role");
-        console.log("Matrix userId:", userId);
+        console.log("Matrix userId:", userId ?? `@${username}`);
         console.log("LMS username:", username);
         console.log("Request URL:", url);
 

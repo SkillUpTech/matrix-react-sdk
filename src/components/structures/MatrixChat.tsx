@@ -55,6 +55,7 @@ import * as Lifecycle from "../../Lifecycle";
 // LifecycleStore is not used but does listen to and dispatch actions
 import "../../stores/LifecycleStore";
 import "../../stores/AutoRageshakeStore";
+import "../../stores/LMSClassChannelSyncStore";
 import PageType from "../../PageTypes";
 import createRoom, { IOpts } from "../../createRoom";
 import { _t, _td, getCurrentLanguage } from "../../languageHandler";

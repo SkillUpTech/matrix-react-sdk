@@ -89,6 +89,61 @@ O ficheiro `sonar-project.properties` configura a análise de qualidade de códi
 | `sonar.typescript.tsconfigPath` | `./tsconfig.json` |
 | `sonar.javascript.lcov.reportPaths` | `coverage/lcov.info` |
 
+### Integração LMS: sincronização automática de turmas/canais
+
+Para ativar a atualização automática dos canais de comunicação quando turmas são adicionadas/removidas a alunos ou docentes, configure:
+
+- `lms_base_url` (já usado para role)
+- `lms_class_channel_sync` (novo bloco opcional)
+
+Exemplo de `config.json`:
+
+```json
+{
+    "lms_base_url": "https://lms.exemplo.gov.pt",
+    "lms_class_channel_sync": {
+        "enabled": true,
+        "poll_interval_ms": 10000,
+        "request_timeout_ms": 8000,
+        "retry_base_delay_ms": 2000,
+        "retry_max_attempts": 8,
+        "classes_endpoint": "https://lms.exemplo.gov.pt/oauth2/getuserclasses/aluno123",
+        "classes_path": "classes"
+    }
+}
+```
+
+Notas operacionais:
+
+- Se `classes_endpoint` não for definido, o cliente usa automaticamente:
+    - `<lms_base_url>/oauth2/getuserclasses/<username>`
+- Se `classes_endpoint` for definido, o valor é usado como URL final (não há substituição de placeholders)
+- `classes_path` define onde está o array de turmas na resposta JSON (por omissão: `classes`)
+- A sincronização é *near-real-time* via polling (padrão: 10s)
+- Falhas de join/leave são registadas e reprocessadas com *exponential backoff* para consistência eventual
+
+Formato esperado do payload do endpoint de turmas:
+
+```json
+{
+    "classes": [
+        {
+            "id": "TURMA-9A",
+            "room_id": "!abc123:chat.exemplo.pt"
+        },
+        {
+            "class_id": "TURMA-10B",
+            "room_alias": "#turma-10b:chat.exemplo.pt"
+        }
+    ]
+}
+```
+
+Campos aceites para identificar turma/canal (o parser é tolerante):
+
+- ID da turma: `id`, `class_id`, `course_id`, `classCode`, `code`, `slug`
+- Canal Matrix: `room_id`/`room_alias` e variações equivalentes (incluindo objetos aninhados como `channel` ou `room`)
+
 ## Testes
 
 ```bash
