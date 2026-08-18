@@ -46,10 +46,10 @@ const useLMSRole = (): string | null => {
 const getWelcomeSubtextKey = (role: string | null): string => {
     if (role?.toLowerCase() === "teacher") {
         console.log("[HomePage] Welcome subtext: Teacher variant (role =", role, ")");
-        return "This is where you'll take part in conversations, announcements, and group discussions related to your classes.";
+        return "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.";
     }
     console.log("[HomePage] Welcome subtext: Student/default variant (role =", role, ")");
-    return "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.";
+    return "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.";
 };
 
 const onClickSendDm = (ev: ButtonEvent): void => {
@@ -110,7 +110,8 @@ const UserWelcomeTop: React.FC = () => {
                 />
             </MiniAvatarUploader> */}
             <img src={eaLogo} alt="eA Logo" style={{ width: 115, height: 74, marginBottom: 12 }} />
-            <h1>{_tDom("Welcome to your eA communication space")}</h1>
+            <h1>Hello my brother</h1>
+            <h1>{_tDom("Welcome to your eA communication space brother")}</h1>
             <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
         </div>
     );
@@ -136,7 +137,8 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         introSection = (
             <React.Fragment>
                 <img src={logoUrl} alt={config.brand} />
-                <h1>{_tDom("Welcome to your eA communication space")}</h1>
+                <h1>Hello my brother Intro Section</h1>
+                <h1>{_tDom("Welcome to your eA communication space my brother")}</h1>
                 <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
             </React.Fragment>
         );
