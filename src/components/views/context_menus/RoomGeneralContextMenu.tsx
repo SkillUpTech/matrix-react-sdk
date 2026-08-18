@@ -16,10 +16,10 @@ limitations under the License.
 
 import { logger } from "matrix-js-sdk/src/logger";
 import { Room } from "matrix-js-sdk/src/models/room";
-import { EventType } from "matrix-js-sdk/src/@types/event";
 import React, { useContext } from "react";
 
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
+import { useIsStudent } from "../../../hooks/useLMSRole";
 import RoomListActions from "../../../actions/RoomListActions";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import dis from "../../../dispatcher/dispatcher";
@@ -202,7 +202,8 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
         );
     }
 
-    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
+    // See RoomSummaryCard: role-gated, not power-level-gated.
+    const canModifyRoomSettings = !useIsStudent();
     const settingsOption: JSX.Element | null = canModifyRoomSettings ? (
         <IconizedContextMenuOption
             onClick={wrapHandler(

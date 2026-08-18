@@ -17,10 +17,10 @@ limitations under the License.
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { Room } from "matrix-js-sdk/src/models/room";
-import { EventType } from "matrix-js-sdk/src/@types/event";
 
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { useIsEncrypted } from "../../../hooks/useIsEncrypted";
+import { useIsStudent } from "../../../hooks/useLMSRole";
 import BaseCard, { Group } from "./BaseCard";
 import { _t } from "../../../languageHandler";
 import RoomAvatar from "../avatars/RoomAvatar";
@@ -296,7 +296,10 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose }) 
         });
     };
 
-    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
+    // Gate on the LMS role, not on m.room.power_levels. That event requires PL 100,
+    // which teachers deliberately do not have (they manage the room, they do not edit
+    // permissions), so a power-level check here hid Settings from staff as well.
+    const canModifyRoomSettings = !useIsStudent();
     const isRoomEncrypted = useIsEncrypted(cli, room);
     const roomContext = useContext(RoomContext);
     const e2eStatus = roomContext.e2eStatus;

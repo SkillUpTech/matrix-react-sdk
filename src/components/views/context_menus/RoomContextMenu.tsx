@@ -16,7 +16,6 @@ limitations under the License.
 
 import React, { useContext } from "react";
 import { Room } from "matrix-js-sdk/src/models/room";
-import { EventType } from "matrix-js-sdk/src/@types/event";
 import { logger } from "matrix-js-sdk/src/logger";
 
 import { IProps as IContextMenuProps } from "../../structures/ContextMenu";
@@ -48,6 +47,7 @@ import PosthogTrackers from "../../../PosthogTrackers";
 import { ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
 import { getKeyBindingsManager } from "../../../KeyBindingsManager";
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
+import { useIsStudent } from "../../../hooks/useLMSRole";
 import SettingsStore from "../../../settings/SettingsStore";
 import { SdkContextClass } from "../../../contexts/SDKContext";
 import { shouldShowComponent } from "../../../customisations/helpers/UIComponents";
@@ -113,7 +113,8 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
     } */
 
     const isDm = DMRoomMap.shared().getUserIdForRoomId(room.roomId);
-    const canModifyRoomSettings = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, cli);
+    // See RoomSummaryCard: role-gated, not power-level-gated.
+    const canModifyRoomSettings = !useIsStudent();
     const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");
     const elementCallVideoRoomsEnabled = useFeatureEnabled("feature_element_call_video_rooms");
     const isVideoRoom =
