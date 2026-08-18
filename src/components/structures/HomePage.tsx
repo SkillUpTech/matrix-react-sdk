@@ -110,8 +110,7 @@ const UserWelcomeTop: React.FC = () => {
                 />
             </MiniAvatarUploader> */}
             <img src={eaLogo} alt="eA Logo" style={{ width: 115, height: 74, marginBottom: 12 }} />
-            <h1>Hello my brother</h1>
-            <h1>{_tDom("Welcome to your eA communication space brother")}</h1>
+            <h1>{_tDom("Welcome to your eA communication space")}</h1>
             <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
         </div>
     );
@@ -137,8 +136,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         introSection = (
             <React.Fragment>
                 <img src={logoUrl} alt={config.brand} />
-                <h1>Hello my brother Intro Section</h1>
-                <h1>{_tDom("Welcome to your eA communication space my brother")}</h1>
+                <h1>{_tDom("Welcome to your eA communication space")}</h1>
                 <h2>{_tDom(getWelcomeSubtextKey(lmsRole))}</h2>
             </React.Fragment>
         );
