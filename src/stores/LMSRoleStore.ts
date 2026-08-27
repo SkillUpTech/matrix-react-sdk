@@ -87,10 +87,13 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
         const client = this.matrixClient;
         if (!client) return;
 
+        // Config now arrives from the authenticated config API, so it can be absent
+        // entirely if that call 401'd or failed. Fail closed: no base URL, no role.
         const lmsBaseUrl = SdkConfig.get("lms_base_url");
         if (!lmsBaseUrl) {
-            logger.warn("[LMSRoleStore] lms_base_url not configured in config.json — defaulting to Student restrictions");
-            console.warn("[LMSRoleStore] lms_base_url not configured in config.json — defaulting to Student restrictions");
+            const msg = "[LMSRoleStore] lms_base_url missing from config — defaulting to Student restrictions";
+            logger.warn(msg);
+            console.warn(msg);
             await this.updateState({ role: null, fetched: true });
             return;
         }
@@ -109,7 +112,10 @@ export class LMSRoleStore extends AsyncStoreWithClient<IState> {
         console.log("Request URL:", url);
 
         try {
-            const response = await fetch(url, { method: "GET" });
+            // Send the LMS session cookie so this cross-origin call is attributable to the
+            // logged-in user, matching how the config API is now consumed and allowing the
+            // endpoint to be moved behind authentication without a client change.
+            const response = await fetch(url, { method: "GET", credentials: "include" });
 
             console.log("HTTP status:", response.status);
 
