@@ -89,7 +89,9 @@ type ObjectType<K extends keyof IConfigOptions> = IConfigOptions[K] extends obje
 
 export default class SdkConfig {
     private static instance: DeepReadonly<IConfigOptions>;
-    private static fallback: SnakedObject<DeepReadonly<IConfigOptions>>;
+    // The config is fetched asynchronously from an authenticated API, so it may arrive
+    // late or never (401, network error). Until put() or reset() has run this is unset.
+    private static fallback?: SnakedObject<DeepReadonly<IConfigOptions>>;
 
     private static setInstance(i: DeepReadonly<IConfigOptions>): void {
         SdkConfig.instance = i;
@@ -109,7 +111,9 @@ export default class SdkConfig {
             // safe to cast as a fallback - we want to break the runtime contract in this case
             return SdkConfig.instance || <IConfigOptions>{};
         }
-        return SdkConfig.fallback.get(key, altCaseName);
+        // Read through the defaults while the config is still in flight, rather than
+        // throwing on an unset fallback. put()/reset() replaces this once it lands.
+        return (SdkConfig.fallback ?? new SnakedObject(DEFAULTS)).get(key, altCaseName);
     }
 
     public static getObject<K extends keyof IConfigOptions>(key: K, altCaseName?: string): ObjectType<K> {
