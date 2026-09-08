@@ -3455,8 +3455,8 @@
     "You must join the room to see its files": "You must join the room to see its files",
     "No files visible in this room": "No files visible in this room",
     "Attach files from chat or just drag and drop them anywhere in a room.": "Attach files from chat or just drag and drop them anywhere in a room.",
-    "Great, that'll help people know it's you": "Great, that'll help people know it's you",
-    "Add a photo so people know it's you.": "Add a photo so people know it's you.",
+    "Great, that’ll help people know it’s you": "Great, that’ll help people know it’s you",
+    "Add a photo so people know it’s you.": "Add a photo so people know it’s you.",
     "Welcome %(name)s": "Welcome %(name)s",
     "Now, let's help you get started": "Now, let's help you get started",
     "Welcome to %(appName)s": "Welcome to %(appName)s",
@@ -3821,8 +3821,5 @@
     "Don't ask again": "Don't ask again",
     "Show people in spaces": "Show people in spaces",
     "If disabled, you can still add Direct Messages to Personal Spaces. If enabled, you'll automatically see everyone who is a member of the Space.": "If disabled, you can still add Direct Messages to Personal Spaces. If enabled, you'll automatically see everyone who is a member of the Space.",
-    "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.": "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.",
-    "Welcome to your eA communication space": "Welcome to your eA communication space",
-    "This is where you'll take part in conversations, announcements, and group discussions related to your classes.": "This is where you'll take part in conversations, announcements, and group discussions related to your classes.",
-    "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.": "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities."
+    "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.": "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms."
 }
