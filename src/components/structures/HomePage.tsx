@@ -19,7 +19,7 @@ import { useContext, useState } from "react";
 
 import AutoHideScrollbar from "./AutoHideScrollbar";
 import { getHomePageUrl } from "../../utils/pages";
-import { _tDom } from "../../languageHandler";
+import { _td, _tDom } from "../../languageHandler";
 import SdkConfig from "../../SdkConfig";
 import dis from "../../dispatcher/dispatcher";
 import { Action } from "../../dispatcher/actions";
@@ -45,11 +45,13 @@ const useLMSRole = (): string | null => {
 
 const getWelcomeSubtextKey = (role: string | null): string => {
     if (role?.toLowerCase() === "teacher") {
-        console.log("[HomePage] Welcome subtext: Teacher variant (role =", role, ")");
-        return "This is where you'll take part in conversations, announcements, and group discussions related to your classes.";
+        return _td(
+            "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.",
+        );
     }
-    console.log("[HomePage] Welcome subtext: Student/default variant (role =", role, ")");
-    return "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.";
+    return _td(
+        "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.",
+    );
 };
 
 const onClickSendDm = (ev: ButtonEvent): void => {
