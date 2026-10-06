@@ -1930,6 +1930,8 @@
     "Cayman Islands": "Ilhas Cayman",
     "%(creator)s created this DM.": "%(creator)s criou esta conversa.",
     "This is the start of <roomName/>.": "Este é o início de <roomName/>.",
+    "A room for %(name)s": "Uma sala para %(name)s",
+    "A Room for %(name)s": "Uma sala para %(name)s",
     "Add a photo, so people can easily spot your room.": "Adicione uma imagem para que as pessoas possam identificar facilmente tua sala.",
     "%(displayName)s created this room.": "%(displayName)s criou esta sala.",
     "You created this room.": "Criou esta sala.",
