@@ -2026,6 +2026,10 @@
     "This is the beginning of your direct message history with <displayName/>.": "This is the beginning of your direct message history with <displayName/>.",
     "Only the two of you are in this conversation, unless either of you invites anyone to join.": "Only the two of you are in this conversation, unless either of you invites anyone to join.",
     "Topic: %(topic)s (<a>edit</a>)": "Topic: %(topic)s (<a>edit</a>)",
+    "A Room for %(name)s": "A Room for %(name)s",
+    "A Space for %(name)s": "A Space for %(name)s",
+    "member": "member",
+    "members": "members",
     "Topic: %(topic)s ": "Topic: %(topic)s ",
     "<a>Add a topic</a> to help people know what it is about.": "<a>Add a topic</a> to help people know what it is about.",
     "You created this room.": "You created this room.",
@@ -3461,8 +3465,6 @@
     "Now, let's help you get started": "Now, let's help you get started",
     "Welcome to %(appName)s": "Welcome to %(appName)s",
     "Welcome to your eA communication space": "Welcome to your eA communication space",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.": "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.": "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.",
     "Own your conversations.": "Own your conversations.",
     "Send a Direct Message": "Send a Direct Message",
     "Explore Public Rooms": "Explore Public Rooms",
@@ -3821,5 +3823,8 @@
     "Don't ask again": "Don't ask again",
     "Show people in spaces": "Show people in spaces",
     "If disabled, you can still add Direct Messages to Personal Spaces. If enabled, you'll automatically see everyone who is a member of the Space.": "If disabled, you can still add Direct Messages to Personal Spaces. If enabled, you'll automatically see everyone who is a member of the Space.",
-    "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.": "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms."
+    "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.": "Home is useful for getting an overview of everything. Keep in mind that disabling it could leave you unable to see certain rooms.",
+    "Powered by The Learning Ecosystem": "Powered by The Learning Ecosystem",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your classes.": "This is where you'll take part in conversations, announcements, and group discussions related to your classes.",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.": "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities."
 }

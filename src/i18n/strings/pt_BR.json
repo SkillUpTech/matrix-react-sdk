@@ -1930,6 +1930,10 @@
     "Cayman Islands": "Ilhas Cayman",
     "%(creator)s created this DM.": "%(creator)s criou esta conversa.",
     "This is the start of <roomName/>.": "Este é o início de <roomName/>.",
+    "A Room for %(name)s": "Uma sala para %(name)s",
+    "A Space for %(name)s": "Um espaço para %(name)s",
+    "member": "membro",
+    "members": "membros",
     "Add a photo, so people can easily spot your room.": "Adicione uma imagem para que as pessoas possam identificar facilmente tua sala.",
     "%(displayName)s created this room.": "%(displayName)s criou esta sala.",
     "You created this room.": "Criou esta sala.",
@@ -2149,8 +2153,8 @@
     "This homeserver has been blocked by its administrator.": "Este servidor local foi bloqueado pelo teu administrador.",
     "You're already in a call with this person.": "Já está numa uma chamada com essa pessoa.",
     "Failed to create initial space rooms": "Falha ao criar salas de espaço iniciais",
-    "%(count)s members|one": "%(count)s integrante",
-    "%(count)s members|other": "%(count)s integrantes",
+    "%(count)s members|one": "%(count)s membro",
+    "%(count)s members|other": "%(count)s membros",
     "Are you sure you want to leave the space '%(spaceName)s'?": "Tem a certeza de que deseja sair desse espaço '%(spaceName)s'?",
     "This space is not public. You will not be able to rejoin without an invite.": "Este espaço não é público. Não poderá entrar novamente sem um convite.",
     "Save Changes": "Guardar alterações",
@@ -3824,6 +3828,7 @@
     "Don’t miss a reply or important message": "Não perca uma resposta ou mensagem importante",
     "Once everyone has joined, you’ll be able to chat": "Assim que todos tiverem entrado, poderá conversar",
     "We need to know it’s you before resetting your password. Click the link in the email we just sent to <b>%(email)s</b>": "Precisamos de confirmar que és tu antes de repor a tua palavra-passe. Clica no link do e-mail que acabamos de enviar para <b>%(email)s</b>",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your classes.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas turmas.",
-    "This is where you’ll take part in conversations, announcements, and group discussions related to your learning activities.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas atividades de aprendizagem."
+    "Powered by The Learning Ecosystem": "Desenvolvido pelo Ecossistema de Aprendizagem",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your classes.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas turmas.",
+    "This is where you'll take part in conversations, announcements, and group discussions related to your learning activities.": "Aqui é onde tu participarás em conversas, anúncios e discussões em grupo relacionadas às tuas atividades de aprendizagem."
 }

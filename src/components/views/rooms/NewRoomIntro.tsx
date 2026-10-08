@@ -40,6 +40,7 @@ import { UIComponent } from "../../../settings/UIFeature";
 import { privateShouldBeEncrypted } from "../../../utils/rooms";
 import { LocalRoom } from "../../../models/LocalRoom";
 import { shouldEncryptRoomWithSingle3rdPartyInvite } from "../../../utils/room/shouldEncryptRoomWithSingle3rdPartyInvite";
+import { localizeDefaultTopic } from "../../../hooks/room/useTopic";
 
 function hasExpectedEncryptionSettings(matrixClient: MatrixClient, room: Room): boolean {
     //force encryptation setting as not
@@ -119,7 +120,8 @@ const NewRoomIntro: React.FC = () => {
         );
     } else {
         const inRoom = room && room.getMyMembership() === "join";
-        const topic = room.currentState.getStateEvents(EventType.RoomTopic, "")?.getContent()?.topic;
+        const rawTopic = room.currentState.getStateEvents(EventType.RoomTopic, "")?.getContent()?.topic;
+        const topic = rawTopic ? localizeDefaultTopic(rawTopic) : rawTopic;
         const canAddTopic = inRoom && room.currentState.maySendStateEvent(EventType.RoomTopic, cli.getSafeUserId());
 
         const onTopicClick = (): void => {
