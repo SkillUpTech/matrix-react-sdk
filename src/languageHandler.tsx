@@ -46,6 +46,29 @@ counterpart.setSeparator("|");
 const FALLBACK_LOCALE = "pt";
 counterpart.setFallbackLocale(FALLBACK_LOCALE);
 
+function registerCounterpartLocaleHelpers(lang: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const enHelpers = require("counterpart/locales/en");
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const ptBrHelpers = require("counterpart/locales/pt-br");
+
+    const helpersByLang: Record<string, object> = {
+        "en": enHelpers,
+        "en-us": enHelpers,
+        "pt": ptBrHelpers,
+        "pt-br": ptBrHelpers,
+    };
+
+    const helpers = helpersByLang[lang] ?? helpersByLang[lang.split("-")[0]];
+    if (helpers) {
+        counterpart.registerTranslations(lang, helpers);
+    } else {
+        counterpart.registerTranslations(lang, enHelpers);
+    }
+}
+
+registerCounterpartLocaleHelpers(FALLBACK_LOCALE);
+
 interface ErrorOptions {
     // Because we're mixing the subsitution variables and `cause` into the same object
     // below, we want them to always explicitly say whether there is an underlying error
@@ -478,6 +501,7 @@ export function setLanguage(preferredLangs: string | string[]): Promise<void> {
             return getLanguageRetry(i18nFolder + availLangs[langToUse].fileName);
         })
         .then(async (langData): Promise<ICounterpartTranslation | undefined> => {
+            registerCounterpartLocaleHelpers(langToUse);
             counterpart.registerTranslations(langToUse, langData);
             await registerCustomTranslations();
             counterpart.setLocale(langToUse);
@@ -493,7 +517,10 @@ export function setLanguage(preferredLangs: string | string[]): Promise<void> {
             }
         })
         .then(async (langData): Promise<void> => {
-            if (langData) counterpart.registerTranslations("en", langData);
+            if (langData) {
+                registerCounterpartLocaleHelpers("en");
+                counterpart.registerTranslations("en", langData);
+            }
             await registerCustomTranslations();
         });
 }
