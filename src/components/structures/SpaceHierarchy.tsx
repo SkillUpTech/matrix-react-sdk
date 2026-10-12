@@ -65,7 +65,7 @@ import { JoinRoomReadyPayload } from "../../dispatcher/payloads/JoinRoomReadyPay
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
 import { getKeyBindingsManager } from "../../KeyBindingsManager";
 import { Alignment } from "../views/elements/Tooltip";
-import { getTopic } from "../../hooks/room/useTopic";
+import { getTopic, localizeDefaultTopic } from "../../hooks/room/useTopic";
 import { SdkContextClass } from "../../contexts/SDKContext";
 import { getDisplayAliasForAliasSet } from "../../Rooms";
 import SettingsStore from "../../settings/SettingsStore";
@@ -207,9 +207,11 @@ const Tile: React.FC<ITileProps> = ({
     let topic: ReactNode | string | null;
     if (joinedRoom) {
         const topicObj = getTopic(joinedRoom);
-        topic = topicToHtml(topicObj?.text, topicObj?.html);
+        topic = topicObj?.text
+            ? topicToHtml(localizeDefaultTopic(topicObj.text), undefined)
+            : topicToHtml(topicObj?.text, topicObj?.html);
     } else {
-        topic = room.topic;
+        topic = room.topic ? localizeDefaultTopic(room.topic) : room.topic;
     }
 
     let topicSection: ReactNode | undefined;
