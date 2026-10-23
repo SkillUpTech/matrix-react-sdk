@@ -299,7 +299,8 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose }) 
     // Gate on the LMS role, not on m.room.power_levels. That event requires PL 100,
     // which teachers deliberately do not have (they manage the room, they do not edit
     // permissions), so a power-level check here hid Settings from staff as well.
-    const canModifyRoomSettings = !useIsStudent();
+    const isStudent = useIsStudent();
+    const canModifyRoomSettings = !isStudent;
     const isRoomEncrypted = useIsEncrypted(cli, room);
     const roomContext = useContext(RoomContext);
     const e2eStatus = roomContext.e2eStatus;
@@ -363,7 +364,8 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose }) 
                         {pinCount > 0 && <span className="mx_BaseCard_Button_sublabel">{pinCount}</span>}
                     </Button>
                 )}
-                {!isVideoRoom && (
+                {/* Students must not export a class room's history: it carries other users' messages. */}
+                {!isVideoRoom && !isStudent && (
                     <Button className="mx_RoomSummaryCard_icon_export" onClick={onRoomExportClick}>
                         {_t("Export chat")}
                     </Button>

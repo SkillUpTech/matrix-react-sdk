@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import React, { ComponentProps } from "react";
 import { mocked } from "jest-mock";
 import { MatrixClient, PendingEventOrdering } from "matrix-js-sdk/src/client";
@@ -24,11 +24,15 @@ import { Room } from "matrix-js-sdk/src/models/room";
 
 import MatrixClientContext from "../../../../src/contexts/MatrixClientContext";
 import RoomContextMenu from "../../../../src/components/views/context_menus/RoomContextMenu";
+import ExportDialog from "../../../../src/components/views/dialogs/ExportDialog";
 import { shouldShowComponent } from "../../../../src/customisations/helpers/UIComponents";
 import { stubClient } from "../../../test-utils";
 import { MatrixClientPeg } from "../../../../src/MatrixClientPeg";
 import DMRoomMap from "../../../../src/utils/DMRoomMap";
 import SettingsStore from "../../../../src/settings/SettingsStore";
+import Modal from "../../../../src/Modal";
+import { LMSRoleStore } from "../../../../src/stores/LMSRoleStore";
+import { UPDATE_EVENT } from "../../../../src/stores/AsyncStore";
 
 jest.mock("../../../../src/customisations/helpers/UIComponents", () => ({
     shouldShowComponent: jest.fn(),
@@ -99,6 +103,65 @@ describe("RoomContextMenu", () => {
         it("should render the developer tools option", () => {
             renderComponent();
             expect(screen.getByText("Developer tools")).toBeInTheDocument();
+        });
+    });
+
+    describe("Export chat role gating", () => {
+        let isStudentSpy: jest.SpyInstance<boolean, []>;
+        const queryExportChat = () => screen.queryByRole("menuitem", { name: "Export chat" });
+
+        beforeEach(() => {
+            isStudentSpy = jest.spyOn(LMSRoleStore.instance, "isStudent");
+        });
+
+        afterEach(() => {
+            isStudentSpy.mockRestore();
+        });
+
+        it("does not put Export chat in the DOM for a student", () => {
+            isStudentSpy.mockReturnValue(true);
+
+            renderComponent();
+
+            expect(queryExportChat()).not.toBeInTheDocument();
+            expect(screen.queryByText("Export chat")).not.toBeInTheDocument();
+            expect(document.querySelector(".mx_RoomTile_iconExport")).toBeNull();
+        });
+
+        it("renders Export chat for a teacher and opens the export dialog", () => {
+            isStudentSpy.mockReturnValue(false);
+            const modalSpy = jest.spyOn(Modal, "createDialog").mockReturnValue(undefined as any);
+
+            renderComponent();
+            fireEvent.click(screen.getByRole("menuitem", { name: "Export chat" }));
+
+            expect(modalSpy).toHaveBeenCalledWith(ExportDialog, { room });
+            expect(onFinished).toHaveBeenCalled();
+            modalSpy.mockRestore();
+        });
+
+        it("shows Export chat once the role resolves from unknown to teacher", () => {
+            // An unknown role is treated as a student until the LMS answers.
+            isStudentSpy.mockReturnValue(true);
+            renderComponent();
+            expect(queryExportChat()).not.toBeInTheDocument();
+
+            isStudentSpy.mockReturnValue(false);
+            act(() => {
+                LMSRoleStore.instance.emit(UPDATE_EVENT, LMSRoleStore.instance);
+            });
+
+            expect(queryExportChat()).toBeInTheDocument();
+        });
+
+        it("does not render Export chat in a video room, even for a teacher", () => {
+            isStudentSpy.mockReturnValue(false);
+            jest.spyOn(SettingsStore, "getValue").mockImplementation((setting) => setting === "feature_video_rooms");
+            jest.spyOn(room, "isElementVideoRoom").mockReturnValue(true);
+
+            renderComponent();
+
+            expect(queryExportChat()).not.toBeInTheDocument();
         });
     });
 });

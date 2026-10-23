@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useRef, useState, Dispatch, SetStateAction } from "react";
+import React, { useEffect, useRef, useState, Dispatch, SetStateAction } from "react";
 import { Room } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
 
@@ -42,6 +42,8 @@ import Spinner from "../elements/Spinner";
 import InfoDialog from "./InfoDialog";
 import ChatExport from "../../../customisations/ChatExport";
 import { validateNumberInRange } from "../../../utils/validate";
+import { useIsStudent } from "../../../hooks/useLMSRole";
+import { showStudentRoleActionDisabledToast } from "../../../utils/roleRestrictions";
 
 interface IProps {
     room: Room;
@@ -90,6 +92,16 @@ const useExportFormState = (): ExportConfig => {
 };
 
 const ExportDialog: React.FC<IProps> = ({ room, onFinished }) => {
+    // Students must not export a class room's history: it carries other users' messages.
+    // The menu entries are already hidden for them; this backstops any other way of
+    // opening the dialog, so no export form is rendered and no Exporter is ever built.
+    const isStudent = useIsStudent();
+    useEffect(() => {
+        if (!isStudent) return;
+        showStudentRoleActionDisabledToast();
+        onFinished(false);
+    }, [isStudent, onFinished]);
+
     const {
         exportFormat,
         exportType,
@@ -118,6 +130,8 @@ const ExportDialog: React.FC<IProps> = ({ room, onFinished }) => {
             });
         },
     );
+
+    if (isStudent) return null;
 
     const startExport = async (): Promise<void> => {
         const exportOptions = {

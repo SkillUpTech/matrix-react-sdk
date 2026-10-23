@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { act, render, fireEvent } from "@testing-library/react";
 import { MatrixEvent, Room } from "matrix-js-sdk/src/matrix";
 
 import DMRoomMap from "../../../../src/utils/DMRoomMap";
@@ -31,6 +31,8 @@ import { RightPanelPhases } from "../../../../src/stores/right-panel/RightPanelS
 import { getMockClientWithEventEmitter, mockClientMethodsUser } from "../../../test-utils";
 import { PollHistoryDialog } from "../../../../src/components/views/dialogs/PollHistoryDialog";
 import { RoomPermalinkCreator } from "../../../../src/utils/permalinks/Permalinks";
+import { LMSRoleStore } from "../../../../src/stores/LMSRoleStore";
+import { UPDATE_EVENT } from "../../../../src/stores/AsyncStore";
 
 // Fake random strings to give a predictable snapshot for checkbox IDs
 jest.mock("matrix-js-sdk/src/randomstring", () => ({
@@ -73,6 +75,7 @@ describe("<RoomSummaryCard />", () => {
     const dispatchSpy = jest.spyOn(defaultDispatcher, "dispatch");
     const rightPanelCardSpy = jest.spyOn(RightPanelStore.instance, "pushCard");
     const featureEnabledSpy = jest.spyOn(settingsHooks, "useFeatureEnabled");
+    const isStudentSpy = jest.spyOn(LMSRoleStore.instance, "isStudent");
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -82,6 +85,8 @@ describe("<RoomSummaryCard />", () => {
         jest.spyOn(room, "isElementVideoRoom").mockRestore();
         jest.spyOn(room, "isCallRoom").mockRestore();
         featureEnabledSpy.mockReset().mockReturnValue(false);
+        // Teacher session by default; an unknown role would be treated as a student.
+        isStudentSpy.mockReset().mockReturnValue(false);
     });
 
     it("renders the room summary", () => {
@@ -186,6 +191,38 @@ describe("<RoomSummaryCard />", () => {
             expect(queryByText("Files")).not.toBeInTheDocument();
             expect(queryByText("Pinned")).not.toBeInTheDocument();
             expect(queryByText("Export chat")).not.toBeInTheDocument();
+        });
+    });
+
+    describe("Export chat role gating", () => {
+        it("does not put Export chat in the DOM for a student", () => {
+            isStudentSpy.mockReturnValue(true);
+            const { container, queryByText } = getComponent();
+
+            expect(queryByText("Export chat")).not.toBeInTheDocument();
+            expect(container.querySelector(".mx_RoomSummaryCard_icon_export")).toBeNull();
+            // the rest of the card is unaffected
+            expect(queryByText("Files")).toBeInTheDocument();
+        });
+
+        it("renders Export chat for a teacher", () => {
+            const { getByText } = getComponent();
+
+            expect(getByText("Export chat")).toBeInTheDocument();
+        });
+
+        it("shows Export chat once the role resolves from unknown to teacher", () => {
+            // An unknown role is treated as a student until the LMS answers.
+            isStudentSpy.mockReturnValue(true);
+            const { queryByText } = getComponent();
+            expect(queryByText("Export chat")).not.toBeInTheDocument();
+
+            isStudentSpy.mockReturnValue(false);
+            act(() => {
+                LMSRoleStore.instance.emit(UPDATE_EVENT, LMSRoleStore.instance);
+            });
+
+            expect(queryByText("Export chat")).toBeInTheDocument();
         });
     });
 });
