@@ -26,6 +26,8 @@ import { MatrixClientPeg } from "../../../../src/MatrixClientPeg";
 import HTMLExporter from "../../../../src/utils/exportUtils/HtmlExport";
 import ChatExport from "../../../../src/customisations/ChatExport";
 import PlainTextExporter from "../../../../src/utils/exportUtils/PlainTextExport";
+import { LMSRoleStore } from "../../../../src/stores/LMSRoleStore";
+import * as roleRestrictions from "../../../../src/utils/roleRestrictions";
 
 jest.useFakeTimers();
 
@@ -87,6 +89,48 @@ describe("<ExportDialog />", () => {
 
         // default setting value
         mocked(ChatExportMock.getForceChatExportParameters!).mockClear().mockReturnValue({});
+        // Teacher session by default; an unknown role would be treated as a student.
+        jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(false);
+    });
+
+    describe("for a student", () => {
+        let toastSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            jest.spyOn(LMSRoleStore.instance, "isStudent").mockReturnValue(true);
+            toastSpy = jest.spyOn(roleRestrictions, "showStudentRoleActionDisabledToast").mockImplementation(() => {});
+        });
+
+        afterEach(() => {
+            toastSpy.mockRestore();
+        });
+
+        it("renders no export form and closes itself", () => {
+            const onFinished = jest.fn();
+            const component = getComponent({ onFinished });
+
+            expect(component.container.querySelector(".mx_ExportDialog")).toBeNull();
+            expect(component.queryByTestId("dialog-primary-button")).toBeNull();
+            expect(component.queryByText("Export Chat")).toBeNull();
+            expect(onFinished).toHaveBeenCalledWith(false);
+            expect(toastSpy).toHaveBeenCalled();
+        });
+
+        it("never builds an exporter", () => {
+            getComponent();
+
+            expect(HTMLExporterMock).not.toHaveBeenCalled();
+            expect(PlainTextExporterMock).not.toHaveBeenCalled();
+            expect(htmlExporterInstance.export).not.toHaveBeenCalled();
+        });
+    });
+
+    it("does not close itself for a teacher", () => {
+        const onFinished = jest.fn();
+        const component = getComponent({ onFinished });
+
+        expect(component.getByText("Export Chat")).toBeInTheDocument();
+        expect(onFinished).not.toHaveBeenCalled();
     });
 
     it("renders export dialog", () => {

@@ -114,7 +114,8 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
 
     const isDm = DMRoomMap.shared().getUserIdForRoomId(room.roomId);
     // See RoomSummaryCard: role-gated, not power-level-gated.
-    const canModifyRoomSettings = !useIsStudent();
+    const isStudent = useIsStudent();
+    const canModifyRoomSettings = !isStudent;
     const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");
     const elementCallVideoRoomsEnabled = useFeatureEnabled("feature_element_call_video_rooms");
     const isVideoRoom =
@@ -316,7 +317,8 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
     }
 
     let exportChatOption: JSX.Element | undefined;
-    if (!isVideoRoom) {
+    // Students must not export a class room's history: it carries other users' messages.
+    if (!isVideoRoom && !isStudent) {
         exportChatOption = (
             <IconizedContextMenuOption
                 onClick={(ev: ButtonEvent) => {
